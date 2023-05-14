@@ -5,10 +5,11 @@ POST localhost:8080/api/users/tobiasras
 Content-Type: application/json
 
 {
-  "name": "12345",
-  "username": "Tobiasras",
-  "email": "Rasmussen2@gmail.com",
-  "password": "asdasdasda"
+  "company_name": "tobiasras",
+  "name": "updatedUser",
+  "username": "tobiaasdasdasdasdasd",
+  "password": "123com",
+  "email": "Radaasdasdasdasdsa@gmail.com"
 }
 
 ###
@@ -24,18 +25,19 @@ content-Type: application/json
 
 ###
 
-PUT localhost:8080/api/users/tobiasras/tobiaqsad
+PUT localhost:8080/api/users/tobiasras/tobiaasdasd
 Content-Type: application/json
 
 {
-  "name": "updatedUser50123123123",
-  "username": "tobia",
-  "password": "123com",
-  "email": "Raasdaasddasdas@gmail.com"
+  "company_name": "tobiasras",
+  "name": "updatedUser5012asdasdasd3123123",
+  "username": "tobiaasdasd",
+  "password": "123142123123",
+  "email": "Rasdasdad@gmail.com"
 }
 ###
 
-DELETE localhost:8080/api/users/tobiasras/jonasdæfægjskldfjsd
+DELETE localhost:8080/api/users/tobiaasdasdasd
 ###
 
 

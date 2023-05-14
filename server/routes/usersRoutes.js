@@ -1,15 +1,19 @@
 import express from 'express'
 import db from '../database/database.js'
-import { userIsUnique } from '../library/users/userIsUnique.js'
 import isEmail from 'validator/lib/isEmail.js'
+import bcrypt from 'bcrypt'
 const router = express.Router()
+
+const generatePassword = async (plainText) => {
+  const salt = await bcrypt.genSalt(10)
+  return bcrypt.hash(plainText, salt)
+}
 
 router.get('/users/:companyname', async (req, res) => {
   const companyName = req.params.companyname
   try {
-    const promise = await db.companies.findOne({ company_name: companyName })
+    const promise = await db.users.findOne({ company_name: companyName })
     const response = await promise
-
     if (response) {
       res.send(response.users)
     } else {
@@ -22,27 +26,38 @@ router.get('/users/:companyname', async (req, res) => {
 
 router.post('/users/:companyname', async (req, res) => {
   const companyName = req.params.companyname
-  const user = req.body
 
-  const result = await userIsUnique(user.username, user.email, companyName)
+  if (req.body.password.length >= 8) {
+    res.status(400).send({ message: 'not valid password' })
+  }
 
-  console.log(result)
+  if (!isEmail(req.body.email)) {
+    res.status(400).send({ message: 'not valid email' })
+  }
 
-  if (result) {
-    try {
-      const response = await db.companies.updateOne(
-        { company_name: companyName },
-        { $push: { users: { user } } })
-      if (response.modifiedCount === 1) {
-        res.send(user)
-      } else {
-        res.status(404).send({ message: 'Company not found' })
-      }
-    } catch (error) {
+  const user = {
+    company_name: req.body.company_name,
+    name: req.body.name,
+    username: req.body.username,
+    password: await generatePassword(req.body.password),
+    email: req.body.email
+  }
+
+  try {
+    const company = db.companies.findOne({ company_name: companyName })
+
+    if (company) {
+      await db.users.insertOne(user)
+      res.send(user)
+    } else {
+      res.status(404).send({ message: `${companyName} not found` })
+    }
+  } catch (error) {
+    if (error.code === 11000) {
+      res.status(400).send({ message: `${error.message}` })
+    } else {
       res.status(500).send({ message: `error: ${error.message}` })
     }
-  } else {
-    res.status(400).send({ message: 'not valid user' })
   }
 })
 
@@ -51,56 +66,52 @@ router.put('/users/:companyname/:username', async (req, res) => {
   const username = req.params.username
   const user = req.body
 
-  // CHECK FOR UNIQUE NESS IN USERNAME AND EMAIL
-  let isValid
-  if (user.username || user.email) {
-    isValid = await userIsUnique(user.username, user.email, companyName)
-  } else {
-    isValid = true
+  // FIELDS TO BE UPDATED
+  const updateFields = {}
+  if (isEmail(user.email)) {
+    updateFields.email = user.email
+  }
+  if (user.name) {
+    updateFields.name = user.name
+  }
+  if (user.username) {
+    updateFields.username = user.username
+  }
+  if (user.password) {
+    updateFields.password = generatePassword(user.password)
   }
 
-  if (isValid) {
-    // FIELDS TO BE UPDATED
-    const updateFields = {}
-    if (user.email && isEmail(user.email)) {
-      updateFields['users.$.user.email'] = user.email
-    }
-    if (user.name) {
-      updateFields['users.$.user.name'] = user.name
-    }
-    if (user.username) {
-      updateFields['users.$.user.username'] = user.username
-    }
-    if (user.password) {
-      updateFields['users.$.user.password'] = user.password
-    }
+  try {
+    const company = db.companies.findOne({ company_name: companyName })
 
-    try {
-      const response = await db.companies.updateOne(
-        { company_name: companyName, 'users.user.username': username },
+    if (company) {
+      const response = await db.users.updateOne(
+        { company_name: companyName, username },
         { $set: updateFields }
       )
       if (response.modifiedCount === 1) {
         res.sendStatus(201)
-      } else {
+      } else if (response.modifiedCount === 0) {
+        res.status(400).send({ message: 'not field updated' })
+      } else if (response.matchedCount === 0) {
         res.status(404).send({ message: 'not found' })
       }
-    } catch (error) {
+    } else {
+      res.status(400).send({ message: `${companyName} not found` })
+    }
+  } catch (error) {
+    if (error.code === 11000) {
+      res.status(400).send({ message: `${error.message}` })
+    } else {
       res.status(500).send({ message: `error: ${error.message}` })
     }
-  } else {
-    res.status(400).send({ message: 'not valid parameters' })
   }
 })
 
-router.delete('/users/:companyname/:username', async (req, res) => {
-  const companyName = req.params.companyname
+router.delete('/users/:companyname:username', async (req, res) => {
   const username = req.params.username
   try {
-    const response = await db.companies.updateOne(
-      { company_name: companyName },
-      { $pull: { users: { 'user.username': username } } }
-    )
+    const response = await db.users.deleteOne({ username })
 
     if (response.modifiedCount === 1) {
       res.sendStatus(200)

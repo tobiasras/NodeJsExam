@@ -23,6 +23,7 @@
     "eslint-plugin-promise": "^6.1.1"
   },
   "scripts": {
+    "databaseSetup": "node database/setupDatbase.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "tobiasras",
