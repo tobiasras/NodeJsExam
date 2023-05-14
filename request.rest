@@ -1,2 +1,71 @@
-POST localhost:8080/api/users/
+GET localhost:8080/api/users/tobiasras
+###
 
+POST localhost:8080/api/users/tobiasras
+Content-Type: application/json
+
+{
+  "name": "12345",
+  "username": "Tobiasras",
+  "email": "Rasmussen2@gmail.com",
+  "password": "asdasdasda"
+}
+
+###
+
+POST localhost:8080/api/companies/
+content-Type: application/json
+
+{
+  "cvr": "2518234912",
+  "company_name": "tobiasras",
+  "users": []
+}
+
+###
+
+PUT localhost:8080/api/users/tobiasras/tobiaqsad
+Content-Type: application/json
+
+{
+  "name": "updatedUser50123123123",
+  "username": "tobia",
+  "password": "123com",
+  "email": "Raasdaasddasdas@gmail.com"
+}
+###
+
+DELETE localhost:8080/api/users/tobiasras/jonasdæfægjskldfjsd
+###
+
+
+
+PUT localhost:8080/api/users/tobiasras/tobiaqsad
+Content-Type: application/json
+
+{
+  "name": "fuckfuckfuck",
+  "password": "123565com"
+}
+###
+
+PUT localhost:8080/api/users/tobiasras/tobiaqsad
+Content-Type: application/json
+
+{
+  "name": "updatedUser50123123123",
+  "password": "123com",
+  "email": "R51231@gmail.com"
+}
+###
+
+PUT localhost:8080/api/users/tobiasras/tobiaqsad
+Content-Type: application/json
+
+{
+  "name": "updatedUser50123123123",
+  "username": "5123tobiaasdasd",
+  "password": "123com",
+  "email": "R51231dasd@gmail.com"
+}
+###

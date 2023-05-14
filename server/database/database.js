@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from 'mongodb'
 
-console.log(process.env.MONGODB_URI)
+console.log('Database uri: ' + process.env.MONGODB_URI)
 
 const client = new MongoClient(process.env.MONGODB_URI, {
   serverApi: {
@@ -13,5 +13,5 @@ const client = new MongoClient(process.env.MONGODB_URI, {
 const db = client.db('coldcanvas')
 
 export default {
-  users: db.collection('users')
+  companies: db.collection('companies')
 }
