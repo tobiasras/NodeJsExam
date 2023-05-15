@@ -14,5 +14,6 @@ const db = client.db('coldcanvas')
 
 export default {
   users: db.collection('users'),
-  companies: db.collection('companies')
+  companies: db.collection('companies'),
+  tokens: db.collection('tokens')
 }

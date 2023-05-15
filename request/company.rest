@@ -1,0 +1,12 @@
+GET localhost:8080/api/companies
+
+###
+
+POST localhost:8080/api/companies/
+content-Type: application/json
+
+{
+  "cvr": "2518234912",
+  "company_name": "tobiasras",
+  "users": []
+}

@@ -1,0 +1,16 @@
+POST localhost:8080/api/login
+content-Type: application/json
+
+{
+  "username": "tobiasjuul",
+  "password": "00000000"
+}
+
+###
+
+POST localhost:8080/api/token
+content-Type: application/json
+
+{
+  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvYmlhc2p1dWwiLCJjb21wYW55IjoidG9iaWFzcmFzIiwiaWF0IjoxNjg0MTQ1MjEzfQ.4CjCzIuRSFf2qgIkvfnJCIQmFjlZCRqmfdggbhGzCTc"
+}

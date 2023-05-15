@@ -6,4 +6,6 @@ db.companies.createIndex({ company_name: 1 }, { unique: true })
 db.users.createIndex({ username: 1 }, { unique: true })
 db.users.createIndex({ email: 1 }, { unique: true })
 
+// db.tokens.createIndex({ createdAt: 1 }, { expireAfterSeconds: 1800 })
+
 console.log('indexes created for database')

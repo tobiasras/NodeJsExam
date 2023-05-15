@@ -1,0 +1,32 @@
+GET localhost:8080/api/users/tobiasras
+authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvYmlhc2p1dWwiLCJjb21wYW55IjoidG9iaWFzcmFzIiwiaWF0IjoxNjg0MTQwOTA5fQ.jRyk9_7W5rjtmC5WnsIxCSXrozIxwXqhXHRo6yePMPg
+
+###
+
+POST localhost:8080/api/users/tobiasras
+Content-Type: application/json
+
+{
+  "company_name": "tobiasras",
+  "name": "updatedUser",
+  "username": "tobiasjuul",
+  "password": "00000000",
+  "email": "tobiasras7@gmail.com",
+  "role": "admin"
+}
+
+###
+
+PUT localhost:8080/api/users/tobiasras/tobiasjuul
+authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvYmlhc2p1dWwiLCJjb21wYW55IjoidG9iaWFzcmFzIiwiaWF0IjoxNjg0MTQwOTA5fQ.jRyk9_7W5rjtmC5WnsIxCSXrozIxwXqhXHRo6yePMPg
+Content-Type: application/json
+
+{
+  "company_name": "tobiasras",
+  "name": "tobias juul",
+  "email": "tobiasras7@gmail.com"
+}
+###
+
+DELETE localhost:8080/api/users/tobiaasdasdasd
+###

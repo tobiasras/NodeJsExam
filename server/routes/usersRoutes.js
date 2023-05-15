@@ -12,10 +12,10 @@ const generatePassword = async (plainText) => {
 router.get('/users/:companyname', async (req, res) => {
   const companyName = req.params.companyname
   try {
-    const promise = await db.users.findOne({ company_name: companyName })
-    const response = await promise
-    if (response) {
-      res.send(response.users)
+    const users = await db.users.find({ company_name: companyName }).toArray()
+
+    if (users) {
+      res.send(users)
     } else {
       res.sendStatus(404)
     }
@@ -27,12 +27,14 @@ router.get('/users/:companyname', async (req, res) => {
 router.post('/users/:companyname', async (req, res) => {
   const companyName = req.params.companyname
 
-  if (req.body.password.length >= 8) {
+  if (!req.body.password.length >= 8) {
     res.status(400).send({ message: 'not valid password' })
+    return
   }
 
   if (!isEmail(req.body.email)) {
     res.status(400).send({ message: 'not valid email' })
+    return
   }
 
   const user = {
