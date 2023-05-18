@@ -6,9 +6,13 @@ import usersRoutes from './routes/usersRoutes.js'
 import companiesRoutes from './routes/companiesRoutes.js'
 import authenticationRoutes from './routes/authenticationRoutes.js'
 import { authenticateToken, checkCompany } from './middleware/authenticationMiddleware.js'
+import cors from 'cors'
+import helmet from 'helmet'
 
 const app = express()
 
+app.use(cors())
+app.use(helmet())
 app.use(express.json())
 
 app.use(express.static(path.resolve('../client/dist')))
@@ -23,7 +27,6 @@ app.get('/', (req, res) => {
 })
 
 const port = process.env.SERVER_PORT || 8080
-
 app.listen(port, () => {
   console.log(`Running on ${port}`)
 })
