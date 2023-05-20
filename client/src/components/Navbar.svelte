@@ -1,15 +1,22 @@
 <script>
   import { Link } from "svelte-navigator";
   import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
+  import LoginModal from "./LoginModal.svelte";
+  import { user } from "../stores/userStore";
+  import UserInfoNav from "./UserInfoNav.svelte";  
+
+  let loginModal
+
+  
 </script>
 
 <header class="h-16 text-secondary-400 font-semibold">
   <nav class="fixed top-0 z-30 w-full p-3 bg-secondary-400">
     <div class="grid grid-cols-8 items-center pl-10">
       <div class="col-start-1 col-span-2">
-        <a class="text-xl text-primary-200 font-extrabold" href="/">
-          <h1 class=" ">COLDCANVAS</h1>
-        </a>
+        <Link to="/">
+            <h1 class="text-xl text-primary-200 font-extrabold">COLDCANVAS</h1>
+        </Link>
       </div>
 
       <div class="col-start-5 col-span-2">
@@ -74,13 +81,29 @@
 
       <div class="ml-5 col-start-8 col-span-1">
         <div />
-        <div class="flex justify-start">
-          <Link to="/login">
-            <Button class="bg-primary-200 hover:bg-primary-300 mr-3">
-              <p class="text-secondary-400">Login</p>
-            </Button>
-          </Link>
+
+
+        <div class="flex justify-end">
+          {#if !$user}
+          <Button
+            class="bg-primary-200 hover:bg-primary-300  mr-3 h-full"
+            on:click={() => (loginModal = true)}
+          >
+            <p class="text-secondary-400">Login</p>
+          </Button>
+          <LoginModal bind:formModal={loginModal} />
+          {:else}
+            <UserInfoNav />
+          {/if}
         </div>
+
+
+
+
+
+
+
+
       </div>
     </div>
   </nav>

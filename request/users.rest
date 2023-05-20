@@ -7,11 +7,11 @@ POST localhost:8080/api/users/tobiasras
 Content-Type: application/json
 
 {
-  "company_name": "tobiasras",
+  "company_name": "tofu",
   "name": "updatedUser",
-  "username": "tobiasjuul",
+  "username": "tofu",
   "password": "00000000",
-  "email": "tobiasras7@gmail.com",
+  "email": "tobias@gmail.com",
   "role": "admin"
 }
 

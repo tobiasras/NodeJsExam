@@ -1,16 +1,28 @@
 <script>
-  import { DarkMode, Listgroup, P } from "flowbite-svelte";
-  import { Router, Route, Link } from "svelte-navigator";
-  import Dashboard from "../dashboardPage/DashboardPage.svelte";
+  import { Button, DarkMode, Listgroup, Modal, P } from "flowbite-svelte";
+  import { Router, Route, Link, useNavigate } from "svelte-navigator";
   import DashboardPage from "../dashboardPage/DashboardPage.svelte";
   import TeamPage from "../teamPage/TeamPage.svelte";
   import UserPage from "../profilePage/profilePage.svelte";
   import ToolsPage from "../toolsPage/ToolsPage.svelte";
+  import CallPage from "../callPage/CallPage.svelte";
+  import { user } from "../../../stores/userStore";
+  
+  if (!$user){    
+    const navigate = useNavigate();
+    navigate('/')
+  }
+
 </script>
 
+
+
+
 <main class=" bg-neutral-200 dark:bg-gray-700">
+
   <div class="grid grid-cols-12">
-    <Router basepath="/app">
+
+    <Router primary={false}>
       <Route path="/dashboard">
         <DashboardPage />
       </Route>
@@ -25,6 +37,10 @@
 
       <Route path="/profile">
         <UserPage />
+      </Route>
+
+      <Route path="/call">
+        <CallPage />
       </Route>
     </Router>
 
@@ -50,7 +66,7 @@
           </div>
         </Link>
 
-        <Link to="/app/profile">
+        <Link to="/app/call">
           <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
             <p class="material-symbols-outlined">phone</p>
 
@@ -59,9 +75,6 @@
             </p>
           </div>
         </Link>
-
-
-        
 
         <Link to="/app/tools">
           <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
@@ -92,17 +105,8 @@
             </p>
           </div>
         </Link>
-        
-      
-
-
-
-
-
-
-
-
       </Listgroup>
     </div>
   </div>
+
 </main>
