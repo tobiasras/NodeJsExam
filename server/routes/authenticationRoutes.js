@@ -9,14 +9,10 @@ router.post('/login', async (req, res) => {
   const username = req.body.username
   const password = req.body.password
 
-  console.log(username)
-  console.log(password)
-
   const userFromDb = await db.users.findOne({ username })
   if (!userFromDb) {
     return res.status(401).send({ message: 'could not authenticate user' })
   }
-
   const result = await bcrypt.compare(password, userFromDb.password)
   if (!result) {
     return res.status(401).send({ message: 'could not authenticate user' })
@@ -27,15 +23,15 @@ router.post('/login', async (req, res) => {
     company: userFromDb.company_name,
     role: userFromDb.role
   }
+
   const accessToken = generateAccessToken(userData)
   const refreshToken = jwt.sign(userData, process.env.REFRESH_TOKEN_SECRET)
 
   // SAVES REFRESH TOKEN TO DATABASE
-  const reponse = await db.tokens.insertOne({ refresh_token: refreshToken })
-  console.log(reponse)
+  await db.tokens.insertOne({ refresh_token: refreshToken })
 
   const expires = new Date()
-  expires.setHours(expires.getHours() + 1)
+  expires.setMinutes(expires.getMinutes() + 30)
 
   userData.token = {
     expires: expires.toISOString(),
@@ -52,7 +48,6 @@ router.post('/token', async (req, res) => {
   if (refreshToken === null) return res.sendStatus(401)
 
   const result = await db.tokens.findOne({ refresh_token: refreshToken })
-  console.log(result)
 
   if (result) {
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
@@ -60,13 +55,20 @@ router.post('/token', async (req, res) => {
 
       const userData = {
         username: user.username,
-        company: user.company_name,
+        company: user.company,
         role: user.role
       }
 
-      const accesToken = generateAccessToken(userData)
+      const accessToken = generateAccessToken(userData)
 
-      res.send({ accesToken })
+      const expires = new Date()
+      expires.setMinutes(expires.getMinutes() + 30)
+
+      const data = {
+        accessToken,
+        expires
+      }
+      res.send(data)
     })
   } else {
     res.status(403).send({ message: 'could not authenticate token' })
@@ -80,7 +82,7 @@ router.delete('/logout', async (req, res) => {
 })
 
 function generateAccessToken (user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60m' })
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' })
 }
 
 export default router

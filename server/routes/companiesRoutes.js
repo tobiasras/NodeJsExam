@@ -16,8 +16,7 @@ router.post('/companies', async (req, res) => {
   const company = req.body
 
   try {
-    const response = await db.companies.insertOne(company)
-    console.log(response)
+    await db.companies.insertOne(company)
     res.sendStatus(200)
   } catch (e) {
     res.send(e)

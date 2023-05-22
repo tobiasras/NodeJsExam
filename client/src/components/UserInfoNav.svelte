@@ -2,14 +2,14 @@
   import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
   import { Link, useNavigate } from "svelte-navigator";
 
-  import { user,  token } from "../stores/userStore";
+  import { user,  tokenData } from "../stores/userStore";
 
   const navigate = useNavigate();
 
 
   function logout()  {
         user.set()
-        token.set()
+        tokenData.set()
         navigate('/')
     }
 

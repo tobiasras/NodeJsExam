@@ -8,8 +8,8 @@
     Toast,
   } from "flowbite-svelte";
   import { BASE_URL } from "../stores/globalStore";
-  import { token, user } from "../stores/userStore";
-
+  import { tokenData, user } from "../stores/userStore";
+  import { blur } from 'svelte/transition';
   async function login() {
     spinner = true;
 
@@ -18,13 +18,24 @@
       password,
     });
 
-    const result = await fetch(`${$BASE_URL}/api/login`, {
+
+    let result
+
+    try {
+      result = await fetch(`${$BASE_URL}/api/login`, {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
       body,
     });
+    } catch (e) {
+      error("Could not connect to server")
+      spinner = false
+      return
+    }
+
+    
 
     spinner = false;
 
@@ -60,7 +71,7 @@
     
     const { accessToken, refreshToken, expires } = bodyFromResponse.token;
 
-    token.set({
+    tokenData.set({
       expireDate: new Date(expires),
       accessToken: accessToken,
       refreshToken: refreshToken
@@ -71,9 +82,21 @@
 
   function error(errorMessage) {
     toastColor = "red";
-    toastMessage = "Could not login";
+    toastMessage = errorMessage;
     toast = true;
+
+    hideToast()
   }
+
+  let counter = 5;
+  function hideToast() {
+    if (--counter > 0)
+      return setTimeout(hideToast, 1000);
+    toast = false;
+    counter = 5
+  }
+
+
 
   export let formModal = false;
 
@@ -92,10 +115,11 @@
     </h3>
 
     {#if toast}
-      <Toast
+      <Toast transition={blur}
         divClass="w-full p-3 text-center"
         bind:color={toastColor}
         simple={true}
+        
       >
         {toastMessage}
       </Toast>
