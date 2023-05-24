@@ -25,7 +25,21 @@ const namespace = (io, namespace) => {
   })
 
   adminNamespace.on('connection', socket => {
-    console.log('is connected')
+    const dummyData = {
+      asdasdasjdkl: 'asdasdsd',
+      asdas1423dasjdkl: 'asdasdsd'
+
+    }
+
+    socket.on('create lead', socket => {
+      console.log(socket)
+    })
+
+    socket.on('hello', (arg) => {
+      console.log(arg) // world
+    })
+
+    socket.emit('initial load', dummyData)
   })
 }
 
