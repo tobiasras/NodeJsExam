@@ -30,7 +30,6 @@ const namespace = (io, namespace) => {
       asdas1423dasjdkl: 'asdasdsd'
 
     }
-
     socket.on('create lead', socket => {
       console.log(socket)
     })

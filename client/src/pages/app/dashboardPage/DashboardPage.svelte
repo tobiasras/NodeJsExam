@@ -29,6 +29,7 @@
         })
 
 
+
         socket.on("initial load", (data) => {
             console.log(data)
         })
@@ -47,27 +48,37 @@
     let isLoading = true
     let errorSocketOnLoad = false
 
-    function sendData() {
-        socket.emit("hello", "world")
-    }
+
 
 
 
     // MODALS
     let modalCreateLeadIsShowing = false;
-    let modalUpdateLead = false;
-    function modalShowUpdateLead() {
-        modalUpdateLead = true
-    }
-    function modalCloseUpdateLead() {
-        modalUpdateLead = false
-    }
     function modalShowCreateLead() {
         modalCreateLeadIsShowing = true
     }
     function modalCloseCreateLead() {
         modalCreateLeadIsShowing = false
     }
+    function saveModalCreate() {
+        createLead()
+    }
+    let createLead
+
+
+
+    let modalUpdateLead = false;
+    let updateLead
+    function modalShowUpdateLead() {
+        modalUpdateLead = true
+    }
+    function modalCloseUpdateLead() {
+        modalUpdateLead = false
+    }
+    function saveModalUpdate() {
+        createLead()
+    }
+
 </script>
 
 
@@ -76,9 +87,12 @@
     {#if !isLoading}
         <div>
             {#if !errorSocketOnLoad}
-                <!-- CREATE LEAD -->
-                <Modal bind:open={modalCreateLeadIsShowing} size="lg" autoclose={false} class="w-full">
-                    <Leadform >
+                <!-- CREATE LEAD MODAL-->
+                <Modal  bind:open={modalCreateLeadIsShowing} size="lg" autoclose={false} class="w-full">
+
+                    <Leadform bind:createLead={createLead}
+                              bind:socket={socket} >
+
                         <div class="flex justify-end">
                             <Button on:click={modalCloseCreateLead}
                                     class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
@@ -86,6 +100,7 @@
                             </Button>
 
                             <Button
+                                    on:click={saveModalCreate}
                                     class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
                                     >Save
                             </Button>
@@ -93,16 +108,21 @@
                     </Leadform>
                 </Modal>
 
-                <!-- UPDATE LEAD -->
+                <!-- UPDATE LEAD MODAL-->
                 <Modal bind:open={modalUpdateLead} size="lg" autoclose={false} class="w-full">
-                    <Leadform headerTitle="Updating:" leadName="random name" >
+
+                    <Leadform bind:socket={socket}
+                              bind:updateLead={updateLead}
+                              headerTitle="Updating:"
+                              leadName="random name" >
+
                         <div class="flex justify-end">
                             <Button on:click={modalCloseUpdateLead}
                                     class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
                             >Decline
                             </Button>
 
-                            <Button
+                            <Button on:click={saveModalUpdate}
                                     class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
                                     >Save
                             </Button>
@@ -110,10 +130,7 @@
                     </Leadform>
                 </Modal>
 
-
-
-                <Table divClass="relative overflow-y-auto bg-gray-100   dark:bg-gray-800 h-4/5 ">
-
+                <Table divClass="relative overflow-y-auto bg-gray-100 dark:bg-gray-800 h-4/5 ">
                     <caption
 
                             class="p-5 text-lg font-semibold text-left text-gray-900 bg-gray-100 dark:text-white dark:bg-gray-900"
@@ -141,9 +158,8 @@
                             <TableBodyCell>Sliver</TableBodyCell>
                             <TableBodyCell>Laptop</TableBodyCell>
                             <TableBodyCell>$2999</TableBodyCell>
-                            <!-- on:click={modalShowUpdateLead} -->
                             <TableBodyCell>
-                                <button on:click={sendData}
+                                <button on:click={modalShowUpdateLead}
                                         class="font-medium text-blue-600 hover:underline dark:text-blue-500">
                                     Edit
                                 </button>

@@ -1,7 +1,6 @@
 <script>
     import {Input, Label, Select, Textarea} from "flowbite-svelte";
-
-
+    export let socket
     export let leadName = ""
     export let headerTitle = "Creating new lead"
 
@@ -13,13 +12,23 @@
         description: ""
     }
 
-
-
     let categoriesModal = [
         {value: "us", name: "Unexplored"},
         {value: "ca", name: "Called"},
         {value: "fr", name: "France"},
     ];
+
+
+    export const createLead = () => {
+        console.log(123)
+        socket.emit("hello", "world")
+    }
+
+
+    export const updateLead = () => {
+        console.log(123)
+        socket.emit("hello", "world")
+    }
 
 </script>
 
