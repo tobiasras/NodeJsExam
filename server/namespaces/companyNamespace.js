@@ -1,5 +1,6 @@
 import db from '../database/database.js'
 import jwt from 'jsonwebtoken'
+import { ObjectId } from 'mongodb'
 
 const companyNameSpaces = async (io) => {
   const companies = await db.companies.find().toArray()
@@ -10,7 +11,7 @@ const companyNameSpaces = async (io) => {
 }
 
 const namespace = (io, namespace) => {
-  const adminNamespace = io.of(namespace)
+  const adminNamespace = io.of('/' + namespace)
 
   adminNamespace.use((socket, next) => {
     const { token } = socket.handshake.auth
@@ -24,21 +25,49 @@ const namespace = (io, namespace) => {
     })
   })
 
-  adminNamespace.on('connection', socket => {
-    const dummyData = {
-      asdasdasjdkl: 'asdasdsd',
-      asdas1423dasjdkl: 'asdasdsd'
+  adminNamespace.on('connection', async socket => {
+    socket.on('create lead', data => {
+      data.id = new ObjectId()
+      db.companies.updateOne({ company_name: namespace }, {
+        $push: {
+          leads: data
+        }
+      })
 
+      const changes = {
+        type: 'create',
+        changes: [
+          data
+        ]
+
+      }
+
+      adminNamespace.emit('lead changes', changes)
+    })
+
+    const initialLoad = {
+      company: await db.companies.findOne({ company_name: namespace })
     }
-    socket.on('create lead', socket => {
-      console.log(socket)
-    })
+    console.log(initialLoad)
 
-    socket.on('hello', (arg) => {
-      console.log(arg) // world
-    })
+    socket.emit('initial load', initialLoad)
 
-    socket.emit('initial load', dummyData)
+    socket.on('update lead', async data => {
+      await db.companies.updateOne(
+        { company_name: namespace },
+        { $set: { 'leads.$[element]': data } },
+        { arrayFilters: [{ 'element.id': data.id }] }
+      )
+
+      const changes = {
+        type: 'update',
+        changes: {
+          [data.id]: data
+        }
+      }
+
+      adminNamespace.emit('lead changes', changes)
+    })
   })
 }
 

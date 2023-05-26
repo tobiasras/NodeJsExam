@@ -1,25 +1,34 @@
-
-
 <script>
-    import {TableBodyCell, TableBodyRow} from "flowbite-svelte";
+    import {Button, Modal, TableBodyCell, TableBodyRow} from "flowbite-svelte";
+    import Leadform from "./LeadForm.svelte";
 
-    export let onClick;
+    export let lead = ""
+    export let socket
 
-    function handleClick() {
-        // Call the onClick function passed from the parent component
-        onClick();
-    }
+    const {category, email, name, phone, id, description, ...otherFields} = lead
+    let specific = {name, email, phone, category}
+
+
+    const row = {...specific, ...otherFields}
+
+    let fields = Object.keys(row)
 
 </script>
 
-<TableBodyRow>
-    <TableBodyCell>Apple MacBook Pro 17"</TableBodyCell>
-    <TableBodyCell>Sliver</TableBodyCell>
-    <TableBodyCell>Laptop</TableBodyCell>
-    <TableBodyCell>$2999</TableBodyCell>
+<TableBodyRow >
+
     <TableBodyCell>
-        <button on:click={handleClick} class="font-medium text-blue-600 hover:underline dark:text-blue-500">
-            Edit
-        </button>
+        {id.slice(6, 12)}
     </TableBodyCell>
+
+    {#each fields as field }
+        <TableBodyCell>{lead[field] || ""}</TableBodyCell>
+    {/each}
+
+
+
+    <slot>
+
+    </slot>
+
 </TableBodyRow>

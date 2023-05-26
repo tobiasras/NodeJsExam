@@ -14,7 +14,6 @@
     <Route path="/"><Frontpage /></Route>
     <Route path="/login"><LoginPage /></Route>
     <Route path="/pricing"><Pricing /></Route>
-
     <Route path="/app/*"> <Application/></Route>
   </Router>
 </div>
