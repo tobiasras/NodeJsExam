@@ -69,25 +69,41 @@ const namespace = (io, namespace) => {
 
         adminNamespace.emit('lead changes', changes)
       } else {
-        console.log('error')
+        socket.emit('error delete', {
+          message: 'could not delete',
+          lead: {
+            data
+          }
+        })
       }
     })
 
     socket.on('update lead', async data => {
-      await db.companies.updateOne(
+      data.id = new ObjectId(data.id)
+
+      const response = await db.companies.updateOne(
         { company_name: namespace },
         { $set: { 'leads.$[element]': data } },
         { arrayFilters: [{ 'element.id': data.id }] }
       )
 
-      const changes = {
-        type: 'update',
-        changes: {
-          [data.id]: data
+      if (response.modifiedCount === 1) {
+        const changes = {
+          type: 'update',
+          changes: {
+            [data.id]: data
+          }
         }
-      }
 
-      adminNamespace.emit('lead changes', changes)
+        adminNamespace.emit('lead changes', changes)
+      } else {
+        socket.emit('error update', {
+          message: 'could not update',
+          lead: {
+            data
+          }
+        })
+      }
     })
   })
 }

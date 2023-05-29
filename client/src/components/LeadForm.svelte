@@ -1,7 +1,6 @@
 <script>
-    import {Input, Label, Select, Textarea} from "flowbite-svelte";
+    import {Input, Label, Select, Textarea, Button, DropdownItem, Dropdown, MenuButton} from "flowbite-svelte";
 
-    
     export let socket
     export let headerTitle = "Creating new lead"
 
@@ -29,8 +28,16 @@
 
 
 
-</script>
+    function createTextField() {
+        console.log(123)
+    }
 
+    function createCategory() {
+        console.log(123)
+    }
+
+
+</script>
 
 <form class="space-y-6" action="#">
     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
@@ -71,6 +78,7 @@
         </div>
 
         <div class="col-start-4 col-span-2 flex flex-col justify-between">
+
             <div>
                 <Label class="space-y-1">
                     <span>Catogory</span>
@@ -81,7 +89,34 @@
                             bind:value={lead.category}
                     />
                 </Label>
+
+
+
+
+                <div class="mt-5 flex items-center justify-between border-t pt-3">
+                    <Label class="">
+                        <span>Add new field</span>
+                    </Label>
+                        <Button class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600"
+                                type="button">+
+                        </Button>
+
+                    <Dropdown>
+                        <DropdownItem on:click(>
+                            Text field
+                        </DropdownItem>
+                        <DropdownItem>
+                            Category
+                        </DropdownItem>
+                    </Dropdown>
+
+
+
+
+                </div>
+
             </div>
+
 
             <slot/>
         </div>

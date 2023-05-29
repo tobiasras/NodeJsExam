@@ -7,6 +7,7 @@
   import ToolsPage from "../toolsPage/ToolsPage.svelte";
   import CallPage from "../callPage/CallPage.svelte";
   import { user } from "../../../stores/userStore";
+  import ArchivePage from "../archivePage/ArchivePage.svelte";
   
   if (!$user){    
     const navigate = useNavigate();
@@ -41,6 +42,10 @@
 
       <Route path="/call">
         <CallPage />
+      </Route>
+
+      <Route path="/archive">
+        <ArchivePage />
       </Route>
     </Router>
 
@@ -102,6 +107,16 @@
 
             <p >
               Profile
+            </p>
+          </div>
+        </Link>
+
+        <Link to="/app/archive">
+          <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
+            <p class="material-symbols-outlined">inventory_2</p>
+
+            <p >
+              Archive
             </p>
           </div>
         </Link>

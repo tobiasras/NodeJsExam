@@ -13,7 +13,7 @@
     import {BASE_URL} from "../../../stores/globalStore";
     import {accessToken} from "../../../lib/accessToken.js";
     import {onMount} from "svelte";
-    import Leadform from "../../../components/LeadForm.svelte";
+    import LeadForm from "../../../components/LeadForm.svelte";
     import TableRow from "../../../components/TableRow.svelte";
     import {Link} from "svelte-navigator";
     import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
@@ -141,7 +141,7 @@
             <!-- CREATE LEAD MODAL-->
             <Modal bind:open={modalCreateLeadIsShowing} size="lg" autoclose={false} class="w-full">
 
-                <Leadform bind:createLead={createLeadFunc}
+                <LeadForm bind:createLead={createLeadFunc}
                           bind:socket={socket}>
 
                     <div class="flex justify-end">
@@ -156,12 +156,12 @@
                         >Save
                         </Button>
                     </div>
-                </Leadform>
+                </LeadForm>
             </Modal>
 
             <!-- UPDATE LEAD MODAL-->
             <Modal bind:open={modalUpdateLead} size="lg" autoclose={false} class="w-full">
-                <Leadform bind:socket={socket}
+                <LeadForm bind:socket={socket}
                           bind:updateLead={updateLeadFunc}
                           bind:lead={updateLeadCache}
                           headerTitle="Updating:">
@@ -177,7 +177,7 @@
                         >Save
                         </Button>
                     </div>
-                </Leadform>
+                </LeadForm>
             </Modal>
 
 
