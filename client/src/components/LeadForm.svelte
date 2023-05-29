@@ -1,7 +1,8 @@
 <script>
     import {Input, Label, Select, Textarea, Button, DropdownItem, Dropdown, MenuButton} from "flowbite-svelte";
     import LeadDropDownWrapper from "./LeadDropDownWrapper.svelte";
-
+    import {prevent_default} from "svelte/internal";
+    let form
     export let socket
 
     export let headerTitle = "Creating new lead"
@@ -28,12 +29,14 @@
         {value: "fr", name: "France"},
     ];
 
-    export const updateLead = () => {
-        socket.emit("update lead", lead)
-    }
-
-    export const createLead = () => {
-        socket.emit("create lead", lead)
+    export const submit = (type) => {
+        if (!form.checkValidity()){
+            form.reportValidity()
+            return false
+        } else {
+            socket.emit(`${type} lead`, lead)
+            return true
+        }
     }
 
     function editTextField(i) {
@@ -68,22 +71,30 @@
         }
     }
 
+
+    function handleSubmit(e) {
+
+    }
+
     let customFieldName = ""
+
 
 </script>
 
-<form class="space-y-6" on:submit|preventDefault={createLead}>
+<form bind:this={form} class="space-y-6">
     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
         { headerTitle }  {lead.name}
     </h3>
     <div class="grid grid-col-6 gap-5">
         <div class="col-start-1 col-span-3">
-            <Label class="space-y-2 mb-2">
-                <span>Description  Can be styled with markdown </span>
-                <Textarea class="bg-gray-600" name="description"
-                          bind:value={lead.description}
-                          required rows="20"/>
+            <Label class="space-y-2 mb-3">
+                <span>Name</span>
+                <Input type="text" name="name" placeholder="Johansen"
+                       bind:value={lead.name}
+                       required/>
             </Label>
+
+
 
             <Label class="space-y-2 mb-3">
                 <span>Email</span>
@@ -102,12 +113,13 @@
                        required/>
             </Label>
 
-            <Label class="space-y-2 mb-3">
-                <span>Name</span>
-                <Input type="text" name="name" placeholder="Johansen"
-                       bind:value={lead.name}
-                       required/>
+            <Label class="space-y-2 mb-2">
+                <span>Description  Can be styled with markdown </span>
+                <Textarea class="bg-gray-600" name="description"
+                          bind:value={lead.description}
+                          required rows="20"/>
             </Label>
+
         </div>
 
         <div class="col-start-4 col-span-2 flex flex-col justify-between">
@@ -187,14 +199,13 @@
                             <DropdownItem on:click={createTextField} slot="footer">Create</DropdownItem>
                         </Dropdown>
                     </Dropdown>
-
-
                 </div>
 
             </div>
 
 
-            <slot/>
+                <slot/>
+
         </div>
     </div>
 </form>

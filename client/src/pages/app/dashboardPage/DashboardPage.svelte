@@ -86,40 +86,31 @@
 
 
     // MODALS
-    let modalCreateLeadIsShowing = false;
-
-    function modalShowCreateLead() {
-        modalCreateLeadIsShowing = true
-    }
-
-    function modalCloseCreateLead() {
-        modalCreateLeadIsShowing = false
-    }
-
-    let createLeadFunc
-
-    function saveModalCreate() {
-        createLeadFunc()
-        modalUpdateLead = false
-    }
-
+    let modalCreateLead = false;
     let modalUpdateLead = false;
-    let updateLead
+
+    let submitCreateLead
+    let submitUpdateLead
+
     let updateLeadCache
 
+    function modalShowCreateLead() {
+        modalCreateLead = true
+    }
+    function saveModalCreate() {
+        if (submitCreateLead("create")){
+           modalCreateLead = false
+        }
+    }
     function modalShowUpdateLead(lead) {
         updateLeadCache = lead
         modalUpdateLead = true
     }
 
-    function modalCloseUpdateLead() {
-        updateLeadCache = ""
-        modalUpdateLead = false
-    }
-
     function saveModalUpdate() {
-        updateLead()
-        modalUpdateLead = false
+        if (submitUpdateLead("update")){
+            modalUpdateLead = false
+        }
     }
 
     function deleteLead(lead) {
@@ -131,38 +122,39 @@
 <div class="col-start-1 col-span-10 px-5 pt-5 h-[calc(100vh-5rem)]">
 
     {#if !isLoading}
-
         {#if !errorSocketOnLoad}
             <!-- CREATE LEAD MODAL-->
-            <Modal bind:open={modalCreateLeadIsShowing} size="lg" autoclose={false} class="w-full">
+            <Modal bind:open={modalCreateLead} size="lg" autoclose={false} class="w-full">
 
-                <LeadForm bind:createLead={createLeadFunc}
+                <LeadForm bind:submit={submitCreateLead}
                           bind:socket={socket}>
 
+
                     <div class="flex justify-end">
-                        <Button on:click={modalCloseCreateLead}
+                        <Button on:click={() => { modalCreateLead = false }}
                                 class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
-                        >Decline
+                        >Abort
                         </Button>
 
-                        <Button
-                                on:click={saveModalCreate}
+                        <Button on:click={saveModalCreate}
                                 class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
                         >Save
                         </Button>
                     </div>
+
+
                 </LeadForm>
             </Modal>
 
             <!-- UPDATE LEAD MODAL-->
             <Modal bind:open={modalUpdateLead} size="lg" autoclose={false} class="w-full">
                 <LeadForm bind:socket={socket}
-                          bind:updateLead={updateLead}
+                          bind:submit={submitUpdateLead}
                           bind:lead={updateLeadCache}
                           headerTitle="Updating:">
 
                     <div class="flex justify-end">
-                        <Button on:click={modalCloseUpdateLead}
+                        <Button on:click={() => { modalUpdateLead = false }}
                                 class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
                         >Decline
                         </Button>
