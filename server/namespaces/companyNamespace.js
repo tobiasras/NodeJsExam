@@ -78,6 +78,27 @@ const namespace = (io, namespace) => {
       }
     })
 
+    socket.on('delete field', async data => {
+      const lead = data.lead
+      lead.id = new ObjectId(lead.id)
+
+      console.log(lead)
+
+      const field = data.field
+
+      console.log(field)
+
+      const update = {}
+      update[`leads.$.${field}`] = 1
+
+      const res = await db.companies.updateOne(
+        { company_name: namespace, 'leads.id': lead.id },
+        { $unset: update }
+      )
+
+      console.log(res)
+    })
+
     socket.on('update lead', async data => {
       data.id = new ObjectId(data.id)
 

@@ -18,7 +18,6 @@
     import {Link} from "svelte-navigator";
     import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
 
-
     $: allLeads = []
     let socket
 
@@ -46,6 +45,9 @@
         socket.on("lead changes", (leadChanges) => {
             switch (leadChanges.type) {
                 case "update":
+
+                    console.log(123)
+
                     const keysFromUpdate = Object.keys(leadChanges.changes);
 
                     for (let i = 0; i < keysFromUpdate.length; i++) {
@@ -70,10 +72,7 @@
                     console.log(indexOfElement)
 
                     allLeads = [...allLeads];
-
-
                     break
-
             }
 
         })
@@ -105,13 +104,10 @@
     }
 
     let modalUpdateLead = false;
-    let updateLeadFunc
+    let updateLead
     let updateLeadCache
 
     function modalShowUpdateLead(lead) {
-
-        console.log(lead)
-
         updateLeadCache = lead
         modalUpdateLead = true
     }
@@ -122,11 +118,10 @@
     }
 
     function saveModalUpdate() {
-        updateLeadFunc()
+        updateLead()
         modalUpdateLead = false
     }
 
-    // LEADS
     function deleteLead(lead) {
         socket.emit("delete lead", lead)
     }
@@ -162,7 +157,7 @@
             <!-- UPDATE LEAD MODAL-->
             <Modal bind:open={modalUpdateLead} size="lg" autoclose={false} class="w-full">
                 <LeadForm bind:socket={socket}
-                          bind:updateLead={updateLeadFunc}
+                          bind:updateLead={updateLead}
                           bind:lead={updateLeadCache}
                           headerTitle="Updating:">
 
@@ -183,7 +178,6 @@
 
             <Table divClass="relative overflow-y-auto bg-gray-100 dark:bg-gray-800 h-4/5 ">
                 <caption
-
                         class="p-5 text-lg font-semibold text-left text-gray-900 bg-gray-100 dark:text-white dark:bg-gray-900"
                 >
                     Our products
@@ -205,9 +199,10 @@
 
                 <TableBody>
                     {#each allLeads as lead (lead.id)}
-                        <TableRow bind:lead={lead} bind:socket={socket}>
+                        <TableRow bind:lead={lead}>
+
                             <TableBodyCell>
-                                <LeadDropDownWrapper lead={lead}>
+                                <LeadDropDownWrapper value={lead}>
                                     <DropdownItem on:click={() => {modalShowUpdateLead(lead)}}>
                                         Edit
                                     </DropdownItem>

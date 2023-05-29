@@ -1,7 +1,7 @@
 <script>
     import {Dropdown, MenuButton} from "flowbite-svelte";
 
-export let lead
+export let value
 
 </script>
 

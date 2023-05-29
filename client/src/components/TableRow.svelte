@@ -3,13 +3,12 @@
     import Leadform from "./LeadForm.svelte";
 
     export let lead = ""
-    export let socket
 
     const {category, email, name, phone, id, description, ...otherFields} = lead
     let specific = {name, email, phone, category}
 
 
-    const row = {...specific, ...otherFields}
+    const row = {...specific}
 
     let fields = Object.keys(row)
 
