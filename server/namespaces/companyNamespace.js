@@ -48,9 +48,30 @@ const namespace = (io, namespace) => {
     const initialLoad = {
       company: await db.companies.findOne({ company_name: namespace })
     }
-    console.log(initialLoad)
 
     socket.emit('initial load', initialLoad)
+
+    socket.on('delete lead', async data => {
+      console.log(data)
+
+      data.id = new ObjectId(data.id)
+
+      const result = await db.companies.updateOne(
+        { company_name: namespace },
+        { $pull: { leads: data } }
+      )
+
+      if (result.modifiedCount === 1) {
+        const changes = {
+          type: 'delete',
+          data
+        }
+
+        adminNamespace.emit('lead changes', changes)
+      } else {
+        console.log('error')
+      }
+    })
 
     socket.on('update lead', async data => {
       await db.companies.updateOne(

@@ -15,9 +15,7 @@
     import {onMount} from "svelte";
     import Leadform from "../../../components/LeadForm.svelte";
     import TableRow from "../../../components/TableRow.svelte";
-    import {each} from "svelte/internal";
     import {Link} from "svelte-navigator";
-    import {data} from "autoprefixer";
     import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
 
 
@@ -33,11 +31,6 @@
             }
         })
 
-
-        socket.on("connect", () => {
-            console.log(123)
-        })
-
         socket.on("initial load", (data) => {
             if (data.company.leads) {
                 allLeads = data.company.leads
@@ -49,11 +42,8 @@
             errorSocketOnLoad = true
         })
 
+
         socket.on("lead changes", (leadChanges) => {
-
-            console.log("lead changes even fired")
-            console.log(leadChanges)
-
             switch (leadChanges.type) {
                 case "update":
                     const keysFromUpdate = Object.keys(leadChanges.changes);
@@ -64,16 +54,29 @@
                             allLeads[indexOfElement] = leadChanges.changes[keysFromUpdate[i]]
                         }
                     }
+                    allLeads = [...allLeads];
 
                     break;
                 case "create":
-
+                    console.log(leadChanges)
                     allLeads.push(...leadChanges.changes)
                     allLeads = [...allLeads];
-                    break
-            }
-        })
 
+                    break
+                case "delete":
+                    const indexOfElement = allLeads.findIndex(lead => lead.id === leadChanges.data.id);
+
+                    allLeads.splice(indexOfElement, 1)
+                    console.log(indexOfElement)
+
+                    allLeads = [...allLeads];
+
+
+                    break
+
+            }
+
+        })
 
         isLoading = false
     })
@@ -123,6 +126,10 @@
         modalUpdateLead = false
     }
 
+    // LEADS
+    function deleteLead(lead) {
+        socket.emit("delete lead", lead)
+    }
 </script>
 
 
@@ -174,7 +181,6 @@
             </Modal>
 
 
-
             <Table divClass="relative overflow-y-auto bg-gray-100 dark:bg-gray-800 h-4/5 ">
                 <caption
 
@@ -205,7 +211,7 @@
                                     <DropdownItem on:click={() => {modalShowUpdateLead(lead)}}>
                                         Edit
                                     </DropdownItem>
-                                    <DropdownItem>
+                                    <DropdownItem on:click={() => {deleteLead(lead)}}>
                                         Delete
                                     </DropdownItem>
                                 </LeadDropDownWrapper>
@@ -221,7 +227,6 @@
                     {/each}
                 </TableBody>
             </Table>
-
 
 
             <div class="absolute bottom-20 left-0 right-5 w-10/12 flex justify-end mb-5">
