@@ -1,7 +1,7 @@
-import db from '../../database/database.js'
+import db from '../database/database.js'
 import { ObjectId } from 'mongodb'
 
-export const dashboard = async (socket, companyName, companyNamespace) => {
+export const leadSockets = async (socket, companyName, companyNamespace) => {
   socket.on('create lead', data => {
     data.id = new ObjectId()
     db.companies.updateOne({ company_name: companyName }, {
@@ -17,16 +17,7 @@ export const dashboard = async (socket, companyName, companyNamespace) => {
       ]
 
     }
-
     companyNamespace.emit('lead changes', changes)
-  })
-
-  socket.on('load dashboard', async () => {
-    const initialLoad = {
-      company: await db.companies.findOne({ company_name: companyName })
-    }
-
-    socket.emit('initial load dashboard', initialLoad)
   })
 
   socket.on('delete lead', async data => {
@@ -68,8 +59,6 @@ export const dashboard = async (socket, companyName, companyNamespace) => {
 
   socket.on('update lead', async data => {
     data.id = new ObjectId(data.id)
-
-    console.log(data)
 
     const response = await db.companies.updateOne(
       { company_name: companyName },

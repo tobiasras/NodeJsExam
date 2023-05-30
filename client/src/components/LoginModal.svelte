@@ -8,7 +8,7 @@
     Toast,
   } from "flowbite-svelte";
   import { BASE_URL } from "../stores/globalStore";
-  import { tokenData, user } from "../stores/userStore";
+  import { tokenData, userStore } from "../stores/userStore";
   import { blur } from 'svelte/transition';
   async function login() {
     spinner = true;
@@ -67,7 +67,7 @@
     toast = true;
 
     const { username, company, role } = bodyFromResponse
-    user.set({ username, company, role })
+    userStore.set({ username, company, role })
     
     const { accessToken, refreshToken, expires } = bodyFromResponse.token;
 

@@ -1,19 +1,17 @@
 <script>
-    import {Button, Card, DarkMode, Listgroup, Modal, P, Spinner} from "flowbite-svelte";
+    import {Button, Card, Spinner} from "flowbite-svelte";
     import {Router, Route, Link, useNavigate} from "svelte-navigator";
     import DashboardPage from "../dashboardPage/DashboardPage.svelte";
     import TeamPage from "../teamPage/TeamPage.svelte";
-    import UserPage from "../profilePage/ProfilePage.svelte";
     import ToolsPage from "../toolsPage/ToolsPage.svelte";
     import CallPage from "../callPage/CallPage.svelte";
-    import {user} from "../../../stores/userStore";
+    import {userStore} from "../../../stores/userStore";
     import ArchivePage from "../archivePage/ArchivePage.svelte";
-    import {onMount} from "svelte";
     import io from "socket.io-client";
     import {BASE_URL} from "../../../stores/globalStore.js";
     import {accessToken} from "../../../lib/accessToken.js";
     import NavMenu from "../../../components/NavMenu.svelte";
-    if (!$user) {
+    if (!$userStore) {
         const navigate = useNavigate();
         navigate('/')
     }
@@ -21,7 +19,7 @@
         const token = await accessToken();
 
         return new Promise((resolve, reject) => {
-            const socket = io(`${$BASE_URL}/${$user.company}`, {
+            const socket = io(`${$BASE_URL}/${$userStore.company}`, {
                 auth: {
                     token: token
                 }
@@ -57,15 +55,11 @@
             </Route>
 
             <Route path="/team">
-                <TeamPage/>
+                <TeamPage socket={socket} />
             </Route>
 
             <Route path="/tools">
                 <ToolsPage/>
-            </Route>
-
-            <Route path="/profile">
-                <UserPage/>
             </Route>
 
             <Route path="/call/:lead">

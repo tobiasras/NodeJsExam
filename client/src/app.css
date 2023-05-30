@@ -4,7 +4,7 @@
 
 @layer utilities {
     .description p {
-        @apply pb-1
+        @apply pb-1 dark:text-gray-200
     }
 
     .description h1 {
@@ -49,6 +49,10 @@
 
     .description code {
         @apply font-mono font-bold dark:text-gray-200
+    }
+
+    body * {
+        @apply transition-colors duration-200;
     }
 }
 

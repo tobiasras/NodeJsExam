@@ -89,6 +89,7 @@
     function deleteLead(lead) {
         socket.emit("delete lead", lead)
     }
+
 </script>
 
 

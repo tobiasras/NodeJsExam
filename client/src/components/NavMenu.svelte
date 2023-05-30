@@ -8,10 +8,6 @@ import {DarkMode, Listgroup} from "flowbite-svelte";
 >
     <div class="flex justify-between">
         <h1 class="text-3xl font-semibold dark:text-neutral-50">Menu</h1>
-
-        <DarkMode
-                btnClass="dark:bg-neutral-100 bg-neutral-800 p-2 rounded-lg text-neutral-50 dark:text-gray-800"
-        />
     </div>
 
     <Listgroup class="bg-neutral-200 mt-3">
