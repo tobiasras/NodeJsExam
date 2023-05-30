@@ -1,0 +1,77 @@
+import db from '../../database/database.js'
+import { ObjectId } from 'mongodb'
+
+export const dashboard = async (socket, companyName, companyNamespace) => {
+  const initialLoad = {
+    company: await db.companies.findOne({ company_name: companyName })
+  }
+
+  socket.on('load dashboard', () => {
+    socket.emit('initial load dashboard', initialLoad)
+  })
+
+  socket.on('delete lead', async data => {
+    data.id = new ObjectId(data.id)
+
+    const result = await db.companies.updateOne(
+      { company_name: companyName },
+      { $pull: { leads: data } }
+    )
+
+    if (result.modifiedCount === 1) {
+      const changes = {
+        type: 'delete',
+        data
+      }
+      companyNamespace.emit('lead changes', changes)
+    } else {
+      socket.emit('error delete', {
+        message: 'could not delete',
+        lead: {
+          data
+        }
+      })
+    }
+  })
+
+  socket.on('delete field', async data => {
+    const lead = data.lead
+    lead.id = new ObjectId(lead.id)
+    const field = data.field
+    const update = {}
+    update[`leads.$.${field}`] = 1
+
+    await db.companies.updateOne(
+      { company_name: companyName, 'leads.id': lead.id },
+      { $unset: update }
+    )
+  })
+
+  socket.on('update lead', async data => {
+    data.id = new ObjectId(data.id)
+
+    const response = await db.companies.updateOne(
+      { company_name: companyName },
+      { $set: { 'leads.$[element]': data } },
+      { arrayFilters: [{ 'element.id': data.id }] }
+    )
+
+    if (response.modifiedCount === 1) {
+      const changes = {
+        type: 'update',
+        changes: {
+          [data.id]: data
+        }
+      }
+
+      companyNamespace.emit('lead changes', changes)
+    } else {
+      socket.emit('error update', {
+        message: 'could not update',
+        lead: {
+          data
+        }
+      })
+    }
+  })
+}

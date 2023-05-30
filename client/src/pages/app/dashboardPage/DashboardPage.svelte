@@ -17,7 +17,7 @@
 
     onMount(async () => {
         socket.emit("load dashboard")
-        socket.on("initial load", (data) => {
+        socket.on("initial load dashboard", (data) => {
             if (data.company.leads) {
                 allLeads = data.company.leads
             }
