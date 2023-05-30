@@ -71,11 +71,6 @@
         }
     }
 
-
-    function handleSubmit(e) {
-
-    }
-
     let customFieldName = ""
 
 
@@ -102,7 +97,6 @@
                        type="email"
                        name="email"
                        placeholder="name@company.com"
-                       required
                 />
             </Label>
 
@@ -110,14 +104,14 @@
                 <span>Phone</span>
                 <Input type="tel" name="phone" placeholder="151231232"
                        bind:value={lead.phone}
-                       required/>
+                    />
             </Label>
 
             <Label class="space-y-2 mb-2">
                 <span>Description  Can be styled with markdown </span>
                 <Textarea class="bg-gray-600" name="description"
                           bind:value={lead.description}
-                          required rows="20"/>
+                          rows="20"/>
             </Label>
 
         </div>

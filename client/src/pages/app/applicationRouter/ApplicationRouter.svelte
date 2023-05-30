@@ -1,127 +1,122 @@
 <script>
-  import { Button, DarkMode, Listgroup, Modal, P } from "flowbite-svelte";
-  import { Router, Route, Link, useNavigate } from "svelte-navigator";
-  import DashboardPage from "../dashboardPage/DashboardPage.svelte";
-  import TeamPage from "../teamPage/TeamPage.svelte";
-  import UserPage from "../profilePage/profilePage.svelte";
-  import ToolsPage from "../toolsPage/ToolsPage.svelte";
-  import CallPage from "../callPage/CallPage.svelte";
-  import { user } from "../../../stores/userStore";
-  import ArchivePage from "../archivePage/ArchivePage.svelte";
-  
-  if (!$user){    
-    const navigate = useNavigate();
-    navigate('/')
-  }
+    import {Button, Card, DarkMode, Listgroup, Modal, P, Spinner} from "flowbite-svelte";
+    import {Router, Route, Link, useNavigate} from "svelte-navigator";
+    import DashboardPage from "../dashboardPage/DashboardPage.svelte";
+    import TeamPage from "../teamPage/TeamPage.svelte";
+    import UserPage from "../profilePage/profilePage.svelte";
+    import ToolsPage from "../toolsPage/ToolsPage.svelte";
+    import CallPage from "../callPage/CallPage.svelte";
+    import {user} from "../../../stores/userStore";
+    import ArchivePage from "../archivePage/ArchivePage.svelte";
+    import {onMount} from "svelte";
+    import io from "socket.io-client";
+    import {BASE_URL} from "../../../stores/globalStore.js";
+    import {accessToken} from "../../../lib/accessToken.js";
+    import NavMenu from "../../../components/NavMenu.svelte";
+    if (!$user) {
+        const navigate = useNavigate();
+        navigate('/')
+    }
+    async function connectSocket() {
+        const token = await accessToken();
 
+        return new Promise((resolve, reject) => {
+            const socket = io(`${$BASE_URL}/${$user.company}`, {
+                auth: {
+                    token: token
+                }
+            });
+
+            socket.on('connect_error', function(err) {
+                reject(new Error('Could not connect to socket: ' + err));
+            });
+
+            socket.on('connect', () => {
+                resolve(socket);
+            });
+        });
+    }
+
+
+    let promise = connectSocket()
 </script>
 
 
-
-
 <main class=" bg-neutral-200 dark:bg-gray-700">
+    <div class="grid grid-cols-12">
 
-  <div class="grid grid-cols-12">
+    {#await promise}
 
-    <Router primary={false}>
-      <Route path="/dashboard">
-        <DashboardPage />
-      </Route>
+        <div class="flex justify-center items-center h-full">
+            <Spinner size="32"/>
+        </div>
 
-      <Route path="/team">
-        <TeamPage />
-      </Route>
+    {:then socket}
+        <Router primary={false}>
+            <Route path="/dashboard">
+                <DashboardPage socket={socket}/>
+            </Route>
 
-      <Route path="/tools">
-        <ToolsPage />
-      </Route>
+            <Route path="/team">
+                <TeamPage/>
+            </Route>
 
-      <Route path="/profile">
-        <UserPage />
-      </Route>
+            <Route path="/tools">
+                <ToolsPage/>
+            </Route>
 
-      <Route path="/call">
-        <CallPage />
-      </Route>
+            <Route path="/profile">
+                <UserPage/>
+            </Route>
 
-      <Route path="/archive">
-        <ArchivePage />
-      </Route>
-    </Router>
+            <Route path="/call">
+                <CallPage/>
+            </Route>
 
-    <div
-      class="col-start-11 col-span-2 bg-neutral-100 dark:bg-gray-800 h-[calc(100vh-4rem)] p-5"
-    >
-      <div class="flex justify-between">
-        <h1 class="text-3xl font-semibold dark:text-neutral-50">Menu</h1>
+            <Route path="/archive">
+                <ArchivePage/>
+            </Route>
+        </Router>
 
-        <DarkMode
-          btnClass="dark:bg-neutral-100 bg-neutral-800 p-2 rounded-lg text-neutral-50 dark:text-gray-800"
-        />
-      </div>
+    {:catch error}
+        <div class="col-span-10 flex justify-center items-center">
+            <Card size="lg">
+                <div class="flex justify-center p-5">
+                    <p class="material-symbols-outlined text-9xl">
+                        priority_high
+                    </p>
+                </div>
+                <div class="p-5 text-center">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Could not
+                        connect
+                        to
+                        socket</h5>
+                    <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
+                        Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse
+                        chronological
+                        order.
+                    </p>
+                </div>
+                <div class="text-center">
+                    <Link to="/">
+                        <Button
+                                class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-5">
+                            Frontpage
+                        </Button>
+                    </Link>
+                    <Link to="/login">
+                        <Button
+                                class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600">
+                            Frontpage
+                        </Button>
+                    </Link>
+                </div>
+            </Card>
+        </div>
+    {/await}
 
-      <Listgroup class="bg-neutral-200 mt-3">
-        <Link to="/app/dashboard">
-          <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
-            <p class="material-symbols-outlined">team_dashboard</p>
 
-            <p >
-              Dashboard
-            </p>
-          </div>
-        </Link>
-
-        <Link to="/app/call">
-          <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
-            <p class="material-symbols-outlined">phone</p>
-
-            <p >
-              Call
-            </p>
-          </div>
-        </Link>
-
-        <Link to="/app/tools">
-          <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
-            <p class="material-symbols-outlined">auto_fix_high</p>
-
-            <p >
-              Tools
-            </p>
-          </div>
-        </Link>
-
-        <Link to="/app/team">
-          <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
-            <p class="material-symbols-outlined">groups</p>
-
-            <p >
-              Team
-            </p>
-          </div>
-        </Link>
-
-        <Link to="/app/profile">
-          <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
-            <p class="material-symbols-outlined">person</p>
-
-            <p >
-              Profile
-            </p>
-          </div>
-        </Link>
-
-        <Link to="/app/archive">
-          <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
-            <p class="material-symbols-outlined">inventory_2</p>
-
-            <p >
-              Archive
-            </p>
-          </div>
-        </Link>
-      </Listgroup>
+        <NavMenu/>
     </div>
-  </div>
 
 </main>

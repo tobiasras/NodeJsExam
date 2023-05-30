@@ -49,7 +49,9 @@ const namespace = (io, namespace) => {
       company: await db.companies.findOne({ company_name: namespace })
     }
 
-    socket.emit('initial load', initialLoad)
+    socket.on('load dashboard', () => {
+      socket.emit('initial load', initialLoad)
+    })
 
     socket.on('delete lead', async data => {
       console.log(data)
