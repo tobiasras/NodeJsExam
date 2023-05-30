@@ -3,7 +3,7 @@
     import {Router, Route, Link, useNavigate} from "svelte-navigator";
     import DashboardPage from "../dashboardPage/DashboardPage.svelte";
     import TeamPage from "../teamPage/TeamPage.svelte";
-    import UserPage from "../profilePage/profilePage.svelte";
+    import UserPage from "../profilePage/ProfilePage.svelte";
     import ToolsPage from "../toolsPage/ToolsPage.svelte";
     import CallPage from "../callPage/CallPage.svelte";
     import {user} from "../../../stores/userStore";
@@ -37,7 +37,6 @@
         });
     }
 
-
     let promise = connectSocket()
 </script>
 
@@ -69,8 +68,8 @@
                 <UserPage/>
             </Route>
 
-            <Route path="/call">
-                <CallPage/>
+            <Route path="/call/:lead">
+                <CallPage socket={socket}/>
             </Route>
 
             <Route path="/archive">

@@ -25,16 +25,7 @@ import {DarkMode, Listgroup} from "flowbite-svelte";
             </div>
         </Link>
 
-        <Link to="/app/call">
-            <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
-                <p class="material-symbols-outlined">phone</p>
-
-                <p >
-                    Call
-                </p>
-            </div>
-        </Link>
-
+    
         <Link to="/app/tools">
             <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
                 <p class="material-symbols-outlined">auto_fix_high</p>

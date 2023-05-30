@@ -2,11 +2,30 @@ import db from '../../database/database.js'
 import { ObjectId } from 'mongodb'
 
 export const dashboard = async (socket, companyName, companyNamespace) => {
-  const initialLoad = {
-    company: await db.companies.findOne({ company_name: companyName })
-  }
+  socket.on('create lead', data => {
+    data.id = new ObjectId()
+    db.companies.updateOne({ company_name: companyName }, {
+      $push: {
+        leads: data
+      }
+    })
 
-  socket.on('load dashboard', () => {
+    const changes = {
+      type: 'create',
+      changes: [
+        data
+      ]
+
+    }
+
+    companyNamespace.emit('lead changes', changes)
+  })
+
+  socket.on('load dashboard', async () => {
+    const initialLoad = {
+      company: await db.companies.findOne({ company_name: companyName })
+    }
+
     socket.emit('initial load dashboard', initialLoad)
   })
 
@@ -49,6 +68,8 @@ export const dashboard = async (socket, companyName, companyNamespace) => {
 
   socket.on('update lead', async data => {
     data.id = new ObjectId(data.id)
+
+    console.log(data)
 
     const response = await db.companies.updateOne(
       { company_name: companyName },

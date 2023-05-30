@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .description p {
+        @apply pb-1
+    }
+
+    .description h1 {
+        @apply mb-4 text-3xl font-extrabold dark:text-gray-200
+    }
+
+    .description h2 {
+        @apply text-2xl font-bold mt-4 dark:text-gray-200
+    }
+
+    .description h3 {
+        @apply text-xl font-bold mt-4 dark:text-gray-200
+    }
+
+    .description h4 {
+        @apply pt-3 font-bold dark:text-gray-200
+    }
+
+    .description ul {
+        @apply w-full space-y-1 list-inside list-disc mt-3
+    }
+
+    .description ol {
+        @apply w-full space-y-1 list-decimal list-inside mt-3 dark:text-gray-200
+    }
+
+    .description li ol {
+        @apply pl-5 mt-1 space-y-1 list-decimal list-inside dark:text-gray-200
+    }
+
+    .description li ul {
+        @apply pl-5  space-y-1 list-disc list-inside dark:text-gray-200
+    }
+
+    .description pre {
+        @apply p-4 my-2 dark:text-gray-200
+    }
+
+    .description a {
+        @apply pt-3 dark:text-gray-200 underline
+    }
+
+    .description code {
+        @apply font-mono font-bold dark:text-gray-200
+    }
+}
+

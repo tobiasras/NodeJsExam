@@ -11,47 +11,48 @@
     import LeadForm from "../../../components/LeadForm.svelte";
     import TableRow from "../../../components/TableRow.svelte";
     import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
+    import {Link} from "svelte-navigator";
 
     $: allLeads = []
     export let socket
 
-    onMount(async () => {
+
+    onMount(() => {
+        updateLeadCache = ""
         socket.emit("load dashboard")
-        socket.on("initial load dashboard", (data) => {
-            if (data.company.leads) {
-                allLeads = data.company.leads
-            }
-        })
+    })
 
-        socket.on("lead changes", (leadChanges) => {
-            switch (leadChanges.type) {
-                case "update":
-                    const keysFromUpdate = Object.keys(leadChanges.changes);
-                    for (let i = 0; i < keysFromUpdate.length; i++) {
-                        const indexOfElement = allLeads.findIndex(lead => lead.id === keysFromUpdate[i]);
-                        if (indexOfElement > -1) {
-                            allLeads[indexOfElement] = leadChanges.changes[keysFromUpdate[i]]
-                        }
+
+    socket.on("initial load dashboard", (data) => {
+        console.log(data.company.leads)
+        allLeads = data.company.leads
+    })
+
+
+    socket.on("lead changes", (leadChanges) => {
+        switch (leadChanges.type) {
+            case "update":
+                const keysFromUpdate = Object.keys(leadChanges.changes);
+                for (let i = 0; i < keysFromUpdate.length; i++) {
+                    const indexOfElement = allLeads.findIndex(lead => lead.id === keysFromUpdate[i]);
+                    if (indexOfElement > -1) {
+                        allLeads[indexOfElement] = leadChanges.changes[keysFromUpdate[i]]
                     }
-                    allLeads = [...allLeads];
-
-                    break;
-                case "create":
-                    console.log(leadChanges)
-                    allLeads.push(...leadChanges.changes)
-                    allLeads = [...allLeads];
-
-                    break
-                case "delete":
-                    const indexOfElement = allLeads.findIndex(lead => lead.id === leadChanges.data.id);
-
-                    allLeads.splice(indexOfElement, 1)
-                    console.log(indexOfElement)
-
-                    allLeads = [...allLeads];
-                    break
-            }
-        })
+                }
+                allLeads = [...allLeads];
+                break;
+            case "create":
+                console.log(leadChanges)
+                allLeads.push(...leadChanges.changes)
+                allLeads = [...allLeads];
+                break
+            case "delete":
+                const indexOfElement = allLeads.findIndex(lead => lead.id === leadChanges.data.id);
+                allLeads.splice(indexOfElement, 1)
+                console.log(indexOfElement)
+                allLeads = [...allLeads];
+                break
+        }
     })
 
 
@@ -171,6 +172,12 @@
                             <DropdownItem on:click={() => {deleteLead(lead)}}>
                                 Delete
                             </DropdownItem>
+
+                            <Link to={`/app/call/${lead.id}`}>
+                                <DropdownItem>
+                                    Call
+                                </DropdownItem>
+                            </Link>
                         </LeadDropDownWrapper>
                     </TableBodyCell>
                 </TableRow>

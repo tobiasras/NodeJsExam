@@ -11,8 +11,8 @@ const companyNameSpaces = async (io) => {
   })
 }
 
-const namespace = (io, namespace) => {
-  const companyNamespace = io.of('/' + namespace)
+const namespace = (io, companyName) => {
+  const companyNamespace = io.of('/' + companyName)
 
   companyNamespace.use((socket, next) => {
     const { token } = socket.handshake.auth
@@ -27,26 +27,30 @@ const namespace = (io, namespace) => {
   })
 
   companyNamespace.on('connection', async socket => {
-    socket.on('create lead', data => {
-      data.id = new ObjectId()
-      db.companies.updateOne({ company_name: namespace }, {
-        $push: {
-          leads: data
-        }
-      })
+    dashboard(socket, companyName, companyNamespace)
 
-      const changes = {
-        type: 'create',
-        changes: [
-          data
-        ]
+    socket.on('load call', async (data) => {
+      data = new ObjectId(data) // Ensure this matches the lead ID you're looking for
 
-      }
+      const result = await db.companies.aggregate([
+        { $match: { company_name: companyName } },
+        {
+          $project: {
+            leads: {
+              $filter: {
+                input: '$leads',
+                as: 'lead',
+                cond: { $eq: ['$$lead.id', data] }
+              }
+            }
+          }
+        },
+        { $unwind: '$leads' },
+        { $replaceRoot: { newRoot: '$leads' } }
+      ]).next()
 
-      companyNamespace.emit('lead changes', changes)
+      socket.emit('initial load call', result)
     })
-
-    dashboard(socket, namespace, companyNamespace)
   })
 }
 
