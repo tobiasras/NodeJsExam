@@ -6,14 +6,12 @@ import { authenticateToken, checkCompany } from '../middleware/authenticationMid
 
 const router = express.Router()
 
-router.use(authenticateToken)
-
-const generatePassword = async (plainText) => {
+export const generatePassword = async (plainText) => {
   const salt = await bcrypt.genSalt(10)
   return bcrypt.hash(plainText, salt)
 }
 
-router.get('/users/:companyname', checkCompany, async (req, res) => {
+router.get('/users/:companyname', authenticateToken, checkCompany, async (req, res) => {
   const companyName = req.params.companyname
   try {
     const users = await db.users.find({ company_name: companyName }).toArray()
@@ -29,8 +27,6 @@ router.get('/users/:companyname', checkCompany, async (req, res) => {
 
 router.get('/users', async (req, res) => {
   const username = req.query.username
-
-  console.log('im here', username)
 
   try {
     const users = await db.users.find({ username }).toArray()
@@ -69,7 +65,13 @@ router.post('/users/:companyname', authenticateToken, checkCompany, async (req, 
   const company = await db.companies.findOne({ company_name: companyName })
 
   if (company) {
-    await db.users.insertOne(user)
+    try {
+      await db.users.insertOne(user)
+    } catch (e) {
+      res.statusCode(400)
+      res.send(e)
+      return
+    }
 
     res.status(200)
     res.send(user)
@@ -128,7 +130,6 @@ router.put('/users/:companyname/:username', authenticateToken, checkCompany, asy
 
 router.delete('/users/:companyname/:username', authenticateToken, checkCompany, async (req, res) => {
   const username = req.params.username
-
   try {
     const response = await db.users.deleteOne({ username })
 

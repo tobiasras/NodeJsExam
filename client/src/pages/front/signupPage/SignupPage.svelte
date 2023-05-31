@@ -18,8 +18,8 @@
         cvr: "12315231232"
     }
 
-    let password1 = "skc69ewg"
-    let password2 = "skc69ewg"
+    let password1 = ""
+    let password2 = ""
 
     async function submit() {
         isLoading = true
@@ -33,6 +33,8 @@
         }
 
         const checkUsername = await fetch(`${$BASE_URL}/api/users?username=${companySignUp.username}`)
+
+
         if (checkUsername.status !== 204) {
             toastColor = "red"
             toastMessage = "dublicate username"
@@ -48,7 +50,14 @@
             },
             body: JSON.stringify({
                 companyName: companySignUp.companyName,
-                cvr: companySignUp.cvr
+                cvr: companySignUp.cvr,
+                user: {
+                    company_name: companySignUp.companyName,
+                    name: companySignUp.name,
+                    username: companySignUp.username,
+                    password: password1,
+                    email: companySignUp.email
+                }
             })
         })
 
@@ -59,30 +68,8 @@
                 toastMessage = "Company already exist"
                 toast = true
                 isLoading = false
-            } else {
-                toastColor = "red"
-                toastMessage = "Error in server"
-                toast = true
-                isLoading = false
             }
-            return
-        }
-
-        const createUser = await fetch(`${$BASE_URL}/api/users/${companySignUp.companyName}`, {
-            method: "POST",
-            headers: {
-                "content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                company_name: companySignUp.companyName,
-                name: companySignUp.name,
-                username: companySignUp.username,
-                password: password1,
-                email: companySignUp.email
-            })
-        })
-
-        if (createUser.status !== 200){
+        } else if (createCompany.status !== 204) {
             toastColor = "red"
             toastMessage = "Could not create company"
             toast = true
@@ -94,7 +81,6 @@
             isLoading = false
         }
     }
-
 
 </script>
 
