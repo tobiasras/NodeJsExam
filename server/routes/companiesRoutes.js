@@ -5,15 +5,6 @@ import { generatePassword } from './usersRoutes.js'
 
 const router = express.Router()
 
-router.get('/companies', async (req, res) => {
-  const allCompanies = await db.companies.find()
-  res.send(allCompanies)
-})
-
-router.get('/companies/:name', async (req, res) => {
-  res.sendStatus(400)
-})
-
 router.post('/companies', async (req, res) => {
   const { companyName, cvr } = req.body
 
