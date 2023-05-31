@@ -2,18 +2,21 @@ import express from 'express'
 import db from '../database/database.js'
 import isEmail from 'validator/lib/isEmail.js'
 import bcrypt from 'bcrypt'
+import { authenticateToken, checkCompany } from '../middleware/authenticationMiddleware.js'
+
 const router = express.Router()
+
+router.use(authenticateToken)
 
 const generatePassword = async (plainText) => {
   const salt = await bcrypt.genSalt(10)
   return bcrypt.hash(plainText, salt)
 }
 
-router.get('/users/:companyname', async (req, res) => {
+router.get('/users/:companyname', checkCompany, async (req, res) => {
   const companyName = req.params.companyname
   try {
     const users = await db.users.find({ company_name: companyName }).toArray()
-
     if (users) {
       res.send(users)
     } else {
@@ -27,7 +30,7 @@ router.get('/users/:companyname', async (req, res) => {
 router.get('/users', async (req, res) => {
   const username = req.query.username
 
-  console.log(username)
+  console.log('im here', username)
 
   try {
     const users = await db.users.find({ username }).toArray()
@@ -42,7 +45,7 @@ router.get('/users', async (req, res) => {
   }
 })
 
-router.post('/users/:companyname', async (req, res) => {
+router.post('/users/:companyname', authenticateToken, checkCompany, async (req, res) => {
   const companyName = req.params.companyname
 
   if (!req.body.password.length >= 8) {
@@ -63,25 +66,20 @@ router.post('/users/:companyname', async (req, res) => {
     email: req.body.email
   }
 
-  try {
-    const company = db.companies.findOne({ company_name: companyName })
+  const company = await db.companies.findOne({ company_name: companyName })
 
-    if (company) {
-      await db.users.insertOne(user)
-      res.send(user)
-    } else {
-      res.status(404).send({ message: `${companyName} not found` })
-    }
-  } catch (error) {
-    if (error.code === 11000) {
-      res.status(400).send({ message: `${error.message}` })
-    } else {
-      res.status(500).send({ message: `error: ${error.message}` })
-    }
+  if (company) {
+    await db.users.insertOne(user)
+
+    res.status(200)
+    res.send(user)
+  } else {
+    res.status(404)
+    res.send({ message: `${companyName} not found` })
   }
 })
 
-router.put('/users/:companyname/:username', async (req, res) => {
+router.put('/users/:companyname/:username', authenticateToken, checkCompany, async (req, res) => {
   const companyName = req.params.companyname
   const username = req.params.username
   const user = req.body
@@ -128,13 +126,14 @@ router.put('/users/:companyname/:username', async (req, res) => {
   }
 })
 
-router.delete('/users/:companyname:username', async (req, res) => {
+router.delete('/users/:companyname/:username', authenticateToken, checkCompany, async (req, res) => {
   const username = req.params.username
+
   try {
     const response = await db.users.deleteOne({ username })
 
-    if (response.modifiedCount === 1) {
-      res.sendStatus(200)
+    if (response.deletedCount === 1) {
+      res.sendStatus(204)
     } else {
       res.status(404).send({ message: 'not found' })
     }

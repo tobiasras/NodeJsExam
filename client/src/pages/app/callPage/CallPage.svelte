@@ -1,9 +1,8 @@
 <script>
-    import {Link, useParams} from "svelte-navigator";
-    import {onDestroy, onMount} from "svelte";
+    import {useParams} from "svelte-navigator";
+    import {onDestroy} from "svelte";
     import {Button, Card, DropdownItem, Input, Modal, Spinner, Textarea, Toast, Toggle} from "flowbite-svelte";
     import SvelteMarkdown from 'svelte-markdown'
-    import {each} from "svelte/internal";
     import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
     import LeadForm from "../../../components/LeadForm.svelte";
 

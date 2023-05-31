@@ -1,13 +1,11 @@
 <script>
     import {Card, MenuButton, Dropdown, DropdownItem, Modal, Button, Label, Input, Select} from "flowbite-svelte";
     import LeadDropDownWrapper from "./LeadDropDownWrapper.svelte";
-    import {tokenData} from "../stores/userStore.js";
+    import {tokenData, userStore} from "../stores/userStore.js";
     import {accessToken} from "../lib/accessToken.js";
-
+    import {BASE_URL} from "../stores/globalStore.js";
 
     export let user;
-
-
 
     let roles = [
         {value: "admin", name: "Admin"},
@@ -35,10 +33,46 @@
         edit = false
     }
 
+    async function deleteUser(user) {
+        const res = await fetch(`${$BASE_URL}/api/users/${$userStore.company}/${user.username}`,{
+            method: "DELETE",
+            headers: {
+                "content-Type": "application/json",
+                    "authorization": `bearer ${await accessToken()}`
+            },
+        })
+
+        if (res.status === 204) {
+            socket.emit("load teampage")
+        }
+    }
+
+
+    let warningModal = false
+
 </script>
 
 
 <Card size="lg">
+    <Modal bind:open={warningModal} size="xs" autoclose>
+        <div class="text-center">
+            <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none"
+                 stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete
+                this product?</h3>
+
+
+            <Button on:click={() => deleteUser(user)} color="gray"
+                    class="mr-2 text-gray-200 bg-gray-700 hover:bg-gray-900">Yes, I'm sure
+            </Button>
+            <Button class="text-gray-200 bg-gray-700 hover:bg-gray-900">No, cancel</Button>
+        </div>
+    </Modal>
+
+
     {#if !edit}
         {#if user.role}
             <p>{user.role}</p>
@@ -51,7 +85,7 @@
 
         <LeadDropDownWrapper value={edit}>
             <DropdownItem on:click={() => edit = !edit }>Edit</DropdownItem>
-            <DropdownItem>Delete</DropdownItem>
+            <DropdownItem on:click={() => warningModal = true} >Delete</DropdownItem>
         </LeadDropDownWrapper>
     </div>
 

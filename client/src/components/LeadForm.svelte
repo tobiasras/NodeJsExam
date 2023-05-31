@@ -1,7 +1,6 @@
 <script>
-    import {Input, Label, Select, Textarea, Button, DropdownItem, Dropdown, MenuButton} from "flowbite-svelte";
+    import {Input, Label, Select, Textarea, Button, DropdownItem, Dropdown} from "flowbite-svelte";
     import LeadDropDownWrapper from "./LeadDropDownWrapper.svelte";
-    import {prevent_default} from "svelte/internal";
     let form
     export let socket
 
@@ -163,8 +162,6 @@
                                     <p>Delete</p>
                                 </DropdownItem>
                             </LeadDropDownWrapper>
-
-
                         </div>
 
                     {/each}

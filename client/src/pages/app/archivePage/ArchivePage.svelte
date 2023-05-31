@@ -1,8 +1,8 @@
 <script>
     import {
-        Button,
+        Button, Dropdown,
         DropdownItem,
-        Input, Modal,
+        Input, MenuButton, Modal,
         Table,
         TableBody,
         TableBodyCell,
@@ -11,12 +11,9 @@
         TableHeadCell
     } from "flowbite-svelte";
     import TableRow from "../../../components/TableRow.svelte";
-    import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
     import {onDestroy, onMount} from "svelte";
 
     export let socket
-
-
 
 
     onMount(() => {
@@ -49,6 +46,7 @@
     let sortOrder = true
 
     let leadCache = {}
+
     function sortLeads(field) {
         if (sortedField === field) {
             sortOrder = !sortOrder
@@ -64,15 +62,23 @@
         archivedLeads = [...archivedLeads]
     }
 
-    function deleteArchivedLead() {
-        socket.emit("delete archived lead", leadCache)
-
-
-
+    function deleteArchivedLead(lead) {
+        socket.emit("delete archived lead", lead)
+        removeLeadFromList(lead)
     }
+
+
+    function removeLeadFromList(leadToRemove) {
+        const index = archivedLeads.findIndex(lead => lead.id === leadToRemove.id)
+        archivedLeads.splice(index, 1)
+        archivedLeads = [...archivedLeads]
+    }
+
     function restoreLead(lead) {
         socket.emit("restore lead", lead)
+        removeLeadFromList(lead)
     }
+
     let warningModal = false
 
 </script>
@@ -117,8 +123,9 @@
             {#each filteredLeads as lead ,i}
                 <TableRow lead={lead}>
                     <TableBodyCell>
-                        <LeadDropDownWrapper>
+                        <MenuButton class="dots-menu dark:text-white" vertical/>
 
+                        <Dropdown>
                             <DropdownItem on:click={() => restoreLead(lead)}>
                                 Restore
                             </DropdownItem>
@@ -129,8 +136,7 @@
                             }}>
                                 Delete
                             </DropdownItem>
-
-                        </LeadDropDownWrapper>
+                        </Dropdown>
                     </TableBodyCell>
                 </TableRow>
             {:else}
@@ -144,12 +150,19 @@
 
         <Modal bind:open={warningModal} size="xs" autoclose>
             <div class="text-center">
-                <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this product?</h3>
+                <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none"
+                     stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete
+                    this product?</h3>
 
 
-                <Button on:click={() => deleteArchivedLead(leadCache)} color="gray" class="mr-2 text-gray-200 bg-gray-700 hover:bg-gray-900">Yes, I'm sure</Button>
-                <Button class="text-gray-200 bg-gray-700 hover:bg-gray-900" >No, cancel</Button>
+                <Button on:click={() => deleteArchivedLead(leadCache)} color="gray"
+                        class="mr-2 text-gray-200 bg-gray-700 hover:bg-gray-900">Yes, I'm sure
+                </Button>
+                <Button class="text-gray-200 bg-gray-700 hover:bg-gray-900">No, cancel</Button>
             </div>
         </Modal>
 

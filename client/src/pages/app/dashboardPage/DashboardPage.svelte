@@ -10,7 +10,6 @@
     import {onDestroy, onMount} from "svelte";
     import LeadForm from "../../../components/LeadForm.svelte";
     import TableRow from "../../../components/TableRow.svelte";
-    import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
     import {Link} from "svelte-navigator";
 
     $: allLeads = []
@@ -26,18 +25,13 @@
         socket.off("lead changes")
     });
 
-
     socket.on("company data", (data) => {
         if (data.company.leads) {
             allLeads = data.company.leads
         }
     })
 
-
     socket.on("lead changes", (leadChanges) => {
-
-        console.log("is being fired: ", leadChanges)
-
         switch (leadChanges.type) {
             case "update":
                 const keysFromUpdate = Object.keys(leadChanges.changes);
@@ -72,7 +66,6 @@
 
     let submitCreateLead
     let submitUpdateLead
-
     let updateLeadCache
 
     function modalShowCreateLead() {
@@ -108,7 +101,7 @@
         lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    )
 
 
     let sortedField = null
