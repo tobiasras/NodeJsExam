@@ -19,6 +19,7 @@ export const namespace = (io, companyName) => {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
       if (err) {
         console.log('ERROR IN JTW SOCKET VERIFY', user)
+
         next(new Error('invalid'))
       }
       next()
@@ -35,12 +36,11 @@ export const namespace = (io, companyName) => {
       socket.emit('initial load teampage', initialLoad)
     })
 
-    socket.on('load dashboard', async () => {
+    socket.on('load company data', async () => {
       const initialLoad = {
         company: await db.companies.findOne({ company_name: companyName })
       }
-
-      socket.emit('initial load dashboard', initialLoad)
+      socket.emit('company data', initialLoad)
     })
 
     socket.on('load call', async (data) => {
@@ -69,22 +69,17 @@ export const namespace = (io, companyName) => {
     socket.on('update user', async (data) => {
       console.log(data)
 
-      jwt.verify(data.sender, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) {
+      jwt.verify(data.sender, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+        if (err || user.role !== 'admin') {
           socket.emit('error update user')
         }
+
+        const response = await db.users.replaceOne(
+          { company_name: companyName, username: data.user.username },
+          data.user
+        )
+        console.log(response)
       })
-
-      data.user._id = new ObjectId(data.user._id)
-
-      console.log(data.user)
-
-      const asd = await db.users.replaceOne(
-        { company_name: companyName, username: data.user.username },
-        data.user
-      )
-
-      console.log('asdh jaksdjh', asd)
     })
   })
 }

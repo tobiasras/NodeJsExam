@@ -6,8 +6,6 @@
   import UserInfoNav from "./UserInfoNav.svelte";  
 
   let loginModal
-
-  
 </script>
 
 <header class="h-16 text-gray-400 font-semibold">
@@ -21,8 +19,22 @@
 
       <div class="col-start-5 col-span-2 ">
         <ul class="flex justify-start">
+          <li>
+            <Link to="/">
+              <Button class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800  mr-3   h-full ">
+                <p class="text-gray-800 dark:text-gray-200">About</p>
+              </Button>
+            </Link>
+          </li>
 
           <li class="mr-3">
+            <Link to="/signup">
+              <Button class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800   h-full ">
+                <p class="text-gray-800 dark:text-gray-200">Signup company</p>
+              </Button>
+            </Link>
+
+          <li >
             <Button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-400  dark:hover:bg-gray-800 ">
               <p class=" text-gray-800 dark:text-gray-200 align-middle text-md">
                 Application
@@ -60,38 +72,20 @@
             </Dropdown>
           </li>
 
-
-          <li>
-            <Link to="/">
-              <Button class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800  mr-3   h-full ">
-                <p class="text-gray-800 dark:text-gray-200">About</p>
-              </Button>
-            </Link>
-          </li>
-
-          <li>
-            <Link to="/signup">
-              <Button class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800   h-full ">
-                <p class="text-gray-800 dark:text-gray-200">Signup company</p>
-              </Button>
-            </Link>
-          </li>
         </ul>
 
 
       </div>
 
       <div class="ml-5 col-start-8 col-span-1">
-
-
-
         <div class="flex justify-end">
           {#if !$userStore}
           <Button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-400  dark:hover:bg-gray-800 "
             on:click={() => (loginModal = true)}
           >
-            <p class="text-secondary-400">Login</p>
+            <p class="dark:text-neutral-50 text-gray-800">Login</p>
           </Button>
+
           <LoginModal bind:formModal={loginModal} />
           {:else}
             <UserInfoNav />

@@ -7,6 +7,8 @@
 
     export let user;
 
+
+
     let roles = [
         {value: "admin", name: "Admin"},
         {value: "user", name: "User"},
@@ -15,11 +17,11 @@
 
     let edit = false
 
-
-
     function submit() {
+        const {_id, ...other} = user
+
         const data = {
-            user
+            user: other
         }
 
         accessToken().then(value => {
@@ -75,11 +77,6 @@
                             required
                             bind:value={user.email}
                     />
-                </Label>
-
-                <Label class="space-y-2 mb-3">
-                    <span>Username</span>
-                    <Input bind:value={user.username} type="tel" name="phone" placeholder="151231232" required/>
                 </Label>
 
                 <Label class="space-y-2 mb-3">

@@ -42,16 +42,6 @@ import {DarkMode, Listgroup} from "flowbite-svelte";
             </div>
         </Link>
 
-        <Link to="/app/profile">
-            <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
-                <p class="material-symbols-outlined">person</p>
-
-                <p >
-                    Profile
-                </p>
-            </div>
-        </Link>
-
         <Link to="/app/archive">
             <div class="p-2 h gap-2 border dark:border-gray-700 border-gray-200 dark:hover:bg-gray-900 hover:bg-gray-200 flex" >
                 <p class="material-symbols-outlined">inventory_2</p>

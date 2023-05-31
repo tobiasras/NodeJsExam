@@ -7,7 +7,7 @@
         Select, Spinner,
     } from "flowbite-svelte";
     import PersonCard from "../../../components/PersonCard.svelte";
-    import {onMount} from "svelte";
+    import {onDestroy, onMount} from "svelte";
 
     export let socket
     let users
@@ -16,10 +16,15 @@
         socket.emit("load teampage")
         socket.on("initial load teampage", (data) => {
             users = data
-            console.log(users)
             isLoading = false
         })
     })
+
+    onDestroy(() => {
+        socket.off("initial load teampage")
+    });
+
+
 
     function createUser() {
 

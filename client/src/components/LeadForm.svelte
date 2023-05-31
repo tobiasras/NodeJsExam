@@ -24,9 +24,11 @@
 
 
     let categoriesModal = [
-        {value: "us", name: "Unexplored"},
-        {value: "ca", name: "Called"},
-        {value: "fr", name: "France"},
+        {value: "new", name: "New"},
+        {value: "called", name: "Called"},
+        {value: "ready", name: "Ready"},
+        {value: "waiting", name: "Waiting"},
+        {value: "waiting", name: "Done"},
     ];
 
     export const submit = (type) => {

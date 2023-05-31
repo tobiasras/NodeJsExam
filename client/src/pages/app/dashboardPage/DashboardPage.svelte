@@ -5,9 +5,9 @@
         TableHead,
         TableHeadCell,
         Button,
-        Modal, TableBodyCell, TableBodyRow, DropdownItem
+        Modal, TableBodyCell, TableBodyRow, DropdownItem, Input, MenuButton, Dropdown
     } from "flowbite-svelte";
-    import {onMount} from "svelte";
+    import {onDestroy, onMount} from "svelte";
     import LeadForm from "../../../components/LeadForm.svelte";
     import TableRow from "../../../components/TableRow.svelte";
     import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
@@ -16,23 +16,28 @@
     $: allLeads = []
     export let socket
 
-
     onMount(() => {
         updateLeadCache = ""
-        socket.emit("load dashboard")
+        socket.emit("load company data")
     })
 
+    onDestroy(() => {
+        socket.off("company data")
+        socket.off("lead changes")
+    });
 
-    socket.on("initial load dashboard", (data) => {
-        console.log(data.company.leads)
 
-        if (data.company.leads){
+    socket.on("company data", (data) => {
+        if (data.company.leads) {
             allLeads = data.company.leads
         }
     })
 
 
     socket.on("lead changes", (leadChanges) => {
+
+        console.log("is being fired: ", leadChanges)
+
         switch (leadChanges.type) {
             case "update":
                 const keysFromUpdate = Object.keys(leadChanges.changes);
@@ -51,8 +56,10 @@
                 break
             case "delete":
                 const indexOfElement = allLeads.findIndex(lead => lead.id === leadChanges.data.id);
-                allLeads.splice(indexOfElement, 1)
-                console.log(indexOfElement)
+
+                if (indexOfElement !== -1) {
+                    allLeads.splice(indexOfElement, 1)
+                }
                 allLeads = [...allLeads];
                 break
         }
@@ -90,7 +97,36 @@
     }
 
     function deleteLead(lead) {
-        socket.emit("delete lead", lead)
+        socket.emit("archive lead", lead)
+    }
+
+    let searchQuery = "";
+
+    $: filteredLeads = allLeads.filter(lead =>
+        lead.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lead.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lead.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+
+    let sortedField = null
+    let sortOrder = true // true for ascending, false for descending
+
+    function sortLeads(field) {
+        if (sortedField === field) {
+            sortOrder = !sortOrder
+        } else {
+            sortedField = field
+            sortOrder = true
+        }
+        allLeads.sort((a, b) => {
+            if (a[field] < b[field]) return sortOrder ? -1 : 1
+            if (a[field] > b[field]) return sortOrder ? 1 : -1
+            return 0
+        })
+        allLeads = [...allLeads]
     }
 
 </script>
@@ -100,11 +136,8 @@
 
     <!-- CREATE LEAD MODAL-->
     <Modal bind:open={modalCreateLead} size="lg" autoclose={false} class="w-full">
-
         <LeadForm bind:submit={submitCreateLead}
                   bind:socket={socket}>
-
-
             <div class="flex justify-end">
                 <Button on:click={() => { modalCreateLead = false }}
                         class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
@@ -116,8 +149,6 @@
                 >Save
                 </Button>
             </div>
-
-
         </LeadForm>
     </Modal>
 
@@ -147,29 +178,43 @@
         <caption
                 class="p-5 text-lg font-semibold text-left text-gray-900 bg-gray-100 dark:text-white dark:bg-gray-900"
         >
-            Our products
+            All Leads
             <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                Browse a list of Flowbite products designed to help you work and play,
-                stay organized, get answers, keep in touch, grow your business, and
-                more.
+                Here is a list of all the leads in the company
             </p>
 
+            <div class="w-64 mt-3">
+                <Input bind:value={searchQuery}
+                       type="text" name="search" placeholder="Search"/>
+            </div>
+
         </caption>
+
         <TableHead theadClass="dark:bg-gray-900 w-full">
-            <TableHeadCell>id</TableHeadCell>
-            <TableHeadCell>Name</TableHeadCell>
-            <TableHeadCell>Email</TableHeadCell>
-            <TableHeadCell>Phone</TableHeadCell>
-            <TableHeadCell>Status</TableHeadCell>
+            <TableHeadCell>
+                <button on:click={() => sortLeads('id')} class="hover:bg-gray-300 py-3 px-2">ID</button>
+            </TableHeadCell>
+            <TableHeadCell>
+                <button on:click={() => sortLeads('name')} class="hover:bg-gray-300 py-3 px-2">Name</button>
+            </TableHeadCell>
+            <TableHeadCell>
+                <button on:click={() => sortLeads('email')} class="hover:bg-gray-300 py-3 px-2">Email</button>
+            </TableHeadCell>
+            <TableHeadCell>
+                <button on:click={() => sortLeads('phone')} class="hover:bg-gray-300 py-3 px-2">Phone</button>
+            </TableHeadCell>
+            <TableHeadCell>
+                <button on:click={() => sortLeads('category')} class="hover:bg-gray-300 py-3 px-2">Status</button>
+            </TableHeadCell>
             <TableHeadCell/>
         </TableHead>
 
         <TableBody>
-            {#each allLeads as lead (lead.id)}
-                <TableRow bind:lead={lead}>
-
+            {#each filteredLeads as lead ,i}
+                <TableRow lead={lead}>
                     <TableBodyCell>
-                        <LeadDropDownWrapper value={lead}>
+                        <MenuButton class="dots-menu dark:text-white" vertical/>
+                        <Dropdown>
                             <DropdownItem on:click={() => {modalShowUpdateLead(lead)}}>
                                 Edit
                             </DropdownItem>
@@ -179,13 +224,12 @@
 
                             <Link to={`/app/call/${lead.id}`}>
                                 <DropdownItem>
-                                    Call
+                                    Open
                                 </DropdownItem>
                             </Link>
-                        </LeadDropDownWrapper>
+                        </Dropdown>
                     </TableBodyCell>
                 </TableRow>
-
             {:else}
                 <TableBodyRow>
                     <TableBodyCell>

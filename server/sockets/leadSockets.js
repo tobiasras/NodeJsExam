@@ -15,13 +15,44 @@ export const leadSockets = async (socket, companyName, companyNamespace) => {
       changes: [
         data
       ]
-
     }
     companyNamespace.emit('lead changes', changes)
   })
 
-  socket.on('delete lead', async data => {
+  socket.on('delete archived lead', async data => {
     data.id = new ObjectId(data.id)
+
+    db.companies.updateOne(
+      { company_name: companyName },
+      { $pull: { archive: data } }
+    )
+  })
+
+  socket.on('restore lead', async (data) => {
+    data.id = new ObjectId(data.id)
+
+    db.companies.updateOne({ company_name: companyName },
+      { $push: { leads: data } })
+
+    db.companies.updateOne(
+      { company_name: companyName },
+      { $pull: { archive: data } }
+    )
+
+    const changes = {
+      type: 'create',
+      changes: [
+        data
+      ]
+    }
+    companyNamespace.emit('lead changes', changes)
+  })
+
+  socket.on('archive lead', async data => {
+    data.id = new ObjectId(data.id)
+
+    db.companies.updateOne({ company_name: companyName },
+      { $push: { archive: data } })
 
     const result = await db.companies.updateOne(
       { company_name: companyName },

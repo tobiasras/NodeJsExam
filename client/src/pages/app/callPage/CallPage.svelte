@@ -1,6 +1,6 @@
 <script>
     import {Link, useParams} from "svelte-navigator";
-    import {onMount} from "svelte";
+    import {onDestroy, onMount} from "svelte";
     import {Button, Card, DropdownItem, Input, Modal, Spinner, Textarea, Toast, Toggle} from "flowbite-svelte";
     import SvelteMarkdown from 'svelte-markdown'
     import {each} from "svelte/internal";
@@ -21,20 +21,26 @@
     let isLoaded = false;
 
     let otherFields
-    onMount(() => {
-        socket.emit("load call", leadID);
 
-        socket.on("initial load call", (data) => {
-            lead = data;
-            const {description, name, email, category , phone, id, ...other} = lead
-            otherFields = other
 
-            isLoaded = true;
-        });
+    socket.emit("load call", leadID);
+
+    socket.on("initial load call", (data) => {
+        lead = data;
+        const {description, name, email, category, phone, id, ...other} = lead
+        otherFields = other
+
+        isLoaded = true;
     });
 
+    onDestroy(() => {
+        socket.off("initial load call")
+    });
+
+
     let toggleMdEditor = true
-    function saveLead(){
+
+    function saveLead() {
         socket.emit(`update lead`, lead)
         toggleMdEditor = true
     }
@@ -45,6 +51,7 @@
     let submitUpdateLead
 
     let updatedLead
+
     function modalShowUpdateLead() {
         updatedLead = lead
         modalUpdateLead = true
@@ -59,8 +66,6 @@
 
     function deleteLead(lead) {
         socket.emit("delete lead", lead)
-
-
     }
 
 
@@ -88,7 +93,6 @@
 
                         </LeadDropDownWrapper>
                     </div>
-
 
 
                     <div class="py-3 mt-3 border-t border-gray-300 dark:border-gray-700">
