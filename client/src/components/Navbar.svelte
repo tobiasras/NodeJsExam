@@ -63,8 +63,16 @@
 
           <li>
             <Link to="/">
-              <Button class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800    h-full ">
+              <Button class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800  mr-3   h-full ">
                 <p class="text-gray-800 dark:text-gray-200">About</p>
+              </Button>
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/signup">
+              <Button class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800   h-full ">
+                <p class="text-gray-800 dark:text-gray-200">Signup company</p>
               </Button>
             </Link>
           </li>
@@ -74,7 +82,7 @@
       </div>
 
       <div class="ml-5 col-start-8 col-span-1">
-        <div />
+
 
 
         <div class="flex justify-end">
@@ -89,9 +97,7 @@
             <UserInfoNav />
           {/if}
 
-          <DarkMode
-                  btnClass="dark:bg-neutral-100 ml-2 w-10  bg-neutral-800 p-2 rounded-lg text-neutral-50 dark:text-gray-800"
-          />
+          <DarkMode btnClass="dark:bg-neutral-100 ml-2 w-10  bg-neutral-800 p-2 rounded-lg text-neutral-50 dark:text-gray-800" />
         </div>
 
 

@@ -35,6 +35,11 @@
         @apply pl-5 mt-1 space-y-1 list-decimal list-inside dark:text-gray-200
     }
 
+    .description li {
+        @apply pl-5 mt-1 space-y-1 list-decimal list-inside dark:text-gray-200
+    }
+
+
     .description li ul {
         @apply pl-5  space-y-1 list-disc list-inside dark:text-gray-200
     }

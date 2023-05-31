@@ -1,5 +1,6 @@
 import express from 'express'
 import db from '../database/database.js'
+import { namespace } from '../namespaces/companyNamespace.js'
 
 const router = express.Router()
 
@@ -13,12 +14,21 @@ router.get('/companies/:name', async (req, res) => {
 })
 
 router.post('/companies', async (req, res) => {
-  const company = req.body
+  const { companyName, cvr } = req.body
+  const company = {
+    company_name: companyName,
+    cvr
+  }
 
   try {
     await db.companies.insertOne(company)
-    res.sendStatus(200)
+
+    namespace(req.app.get('io'), companyName)
+
+    res.sendStatus(204)
   } catch (e) {
+    console.log(e)
+    res.statusCode = 400
     res.send(e)
   }
 })

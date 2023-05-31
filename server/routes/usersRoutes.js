@@ -24,6 +24,24 @@ router.get('/users/:companyname', async (req, res) => {
   }
 })
 
+router.get('/users', async (req, res) => {
+  const username = req.query.username
+
+  console.log(username)
+
+  try {
+    const users = await db.users.find({ username }).toArray()
+    console.log(users)
+    if (users.length === 0) {
+      res.sendStatus(204)
+    } else {
+      res.sendStatus(400)
+    }
+  } catch (error) {
+    res.sendStatus(400)
+  }
+})
+
 router.post('/users/:companyname', async (req, res) => {
   const companyName = req.params.companyname
 

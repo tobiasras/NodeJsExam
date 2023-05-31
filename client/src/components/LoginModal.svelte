@@ -35,8 +35,6 @@
       return
     }
 
-    
-
     spinner = false;
 
     switch (result.status) {

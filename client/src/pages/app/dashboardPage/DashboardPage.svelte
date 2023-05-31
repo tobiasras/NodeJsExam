@@ -25,7 +25,10 @@
 
     socket.on("initial load dashboard", (data) => {
         console.log(data.company.leads)
-        allLeads = data.company.leads
+
+        if (data.company.leads){
+            allLeads = data.company.leads
+        }
     })
 
 

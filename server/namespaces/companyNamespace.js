@@ -5,13 +5,12 @@ import { leadSockets } from '../sockets/leadSockets.js'
 
 const companyNameSpaces = async (io) => {
   const companies = await db.companies.find().toArray()
-
   companies.forEach(company => {
     namespace(io, company.company_name)
   })
 }
 
-const namespace = (io, companyName) => {
+export const namespace = (io, companyName) => {
   const companyNamespace = io.of('/' + companyName)
 
   companyNamespace.use((socket, next) => {
@@ -30,7 +29,7 @@ const namespace = (io, companyName) => {
     leadSockets(socket, companyName, companyNamespace)
 
     socket.on('load teampage', async () => {
-      const initialLoad = await db.users.find({ company_name: 'tobiasras' },
+      const initialLoad = await db.users.find({ company_name: companyName },
         { projection: { password: 0 } }).toArray()
 
       socket.emit('initial load teampage', initialLoad)

@@ -7,7 +7,7 @@ import cors from 'cors'
 import http from 'http'
 import helmet from 'helmet'
 import { Server } from 'socket.io'
-import companyNamespace from './namespaces/companyNamespace.js'
+import loadCompanies from './namespaces/companyNamespace.js'
 
 const app = express()
 
@@ -25,7 +25,9 @@ const io = new Server(server, {
     methods: ['*']
   }
 })
-companyNamespace(io)
+
+app.set('io', io)
+loadCompanies(io)
 
 // ROUTES
 app.use('/api', authenticationRoutes)
