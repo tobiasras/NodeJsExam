@@ -3,8 +3,11 @@ import db from '../database/database.js'
 import isEmail from 'validator/lib/isEmail.js'
 import bcrypt from 'bcrypt'
 import { authenticateToken, checkCompany } from '../middleware/authenticationMiddleware.js'
+import { createLimiter } from '../middleware/limiter.js'
 
 const router = express.Router()
+
+router.use(createLimiter(15, 300))
 
 export const generatePassword = async (plainText) => {
   const salt = await bcrypt.genSalt(10)

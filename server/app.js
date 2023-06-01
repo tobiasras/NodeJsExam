@@ -8,6 +8,7 @@ import http from 'http'
 import helmet from 'helmet'
 import { Server } from 'socket.io'
 import loadCompanies from './namespaces/companyNamespace.js'
+import { createLimiter } from './middleware/limiter.js'
 
 const app = express()
 

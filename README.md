@@ -75,7 +75,7 @@ export const BASE_URL = readable('http://localhost:8080')
 
 2. Run the command:
 ```
-    npm run preview
+    npm run dev
 ```
 
 Now the client is booting up like production

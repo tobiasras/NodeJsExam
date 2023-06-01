@@ -2,8 +2,11 @@ import express from 'express'
 import db from '../database/database.js'
 import { namespace } from '../namespaces/companyNamespace.js'
 import { generatePassword } from './usersRoutes.js'
+import { createLimiter } from '../middleware/limiter.js'
 
 const router = express.Router()
+
+router.use(createLimiter(15, 300))
 
 router.post('/companies', async (req, res) => {
   const { companyName, cvr } = req.body

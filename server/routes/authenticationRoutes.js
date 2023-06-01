@@ -2,8 +2,11 @@ import express from 'express'
 import db from '../database/database.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { createLimiter } from '../middleware/limiter.js'
 
 const router = express.Router()
+
+router.use(createLimiter(15, 50))
 
 router.post('/login', async (req, res) => {
   const username = req.body.username
