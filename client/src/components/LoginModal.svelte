@@ -97,8 +97,8 @@
   let toast = false
   let toastColor
   let toastMessage
-  let username = 'tofu'
-  let password = '00000000'
+  let username = ''
+  let password = ''
   let spinner = false
 </script>
 

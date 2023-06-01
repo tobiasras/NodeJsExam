@@ -9,13 +9,7 @@
     let toastColor
     let toastMessage
 
-    const companySignUp = {
-      companyName: 'asdasjlk',
-      email: 'taskdljasdlkj@asdjalksd.dk',
-      username: 'asdjaskdjkl',
-      name: 'asdjadsjlsakd',
-      cvr: '12315231232'
-    }
+    const companySignUp = {}
 
     let password1 = ''
     let password2 = ''
