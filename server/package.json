@@ -25,6 +25,7 @@
     "eslint-plugin-promise": "^6.1.1"
   },
   "scripts": {
+    "start": "node app.js",
     "databaseSetup": "node database/setupDatbase.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
