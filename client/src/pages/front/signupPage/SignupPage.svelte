@@ -1,89 +1,86 @@
 <script>
-
-    import {Button, Input, Label, Spinner, Textarea, Toast} from "flowbite-svelte";
-    import {Link} from "svelte-navigator";
-    import {blur} from "svelte/transition";
-    import {BASE_URL} from "../../../stores/globalStore.js";
+    import { Button, Input, Label, Spinner, Toast } from 'flowbite-svelte'
+    import { Link } from 'svelte-navigator'
+    import { blur } from 'svelte/transition'
+    import { BASE_URL } from '../../../stores/globalStore.js'
 
     let isLoading = false
     let toast = false
     let toastColor
     let toastMessage
 
-    let companySignUp = {
-        companyName: "asdasjlk",
-        email: "taskdljasdlkj@asdjalksd.dk",
-        username: "asdjaskdjkl",
-        name: "asdjadsjlsakd",
-        cvr: "12315231232"
+    const companySignUp = {
+      companyName: 'asdasjlk',
+      email: 'taskdljasdlkj@asdjalksd.dk',
+      username: 'asdjaskdjkl',
+      name: 'asdjadsjlsakd',
+      cvr: '12315231232'
     }
 
-    let password1 = ""
-    let password2 = ""
+    let password1 = ''
+    let password2 = ''
 
-    async function submit() {
-        isLoading = true
+    async function submit () {
+      isLoading = true
 
-        if (password1 !== password2 && password1.length > 8) {
-            toastColor = "red"
-            toastMessage = "not valid password"
-            toast = true
-            isLoading = false
-            return
-        }
+      if (password1 !== password2 && password1.length > 8) {
+        toastColor = 'red'
+        toastMessage = 'not valid password'
+        toast = true
+        isLoading = false
+        return
+      }
 
-        const checkUsername = await fetch(`${$BASE_URL}/api/users?username=${companySignUp.username}`)
+      const checkUsername = await fetch(`${$BASE_URL}/api/users?username=${companySignUp.username}`)
 
+      if (checkUsername.status !== 204) {
+        toastColor = 'red'
+        toastMessage = 'dublicate username'
+        toast = true
+        isLoading = false
+        return
+      }
 
-        if (checkUsername.status !== 204) {
-            toastColor = "red"
-            toastMessage = "dublicate username"
-            toast = true
-            isLoading = false
-            return
-        }
-
-        const createCompany = await fetch(`${$BASE_URL}/api/companies`, {
-            method: "POST",
-            headers: {
-                "content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                companyName: companySignUp.companyName,
-                cvr: companySignUp.cvr,
-                user: {
-                    company_name: companySignUp.companyName,
-                    name: companySignUp.name,
-                    username: companySignUp.username,
-                    password: password1,
-                    email: companySignUp.email
-                }
-            })
+      const createCompany = await fetch(`${$BASE_URL}/api/companies`, {
+        method: 'POST',
+        headers: {
+          'content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          companyName: companySignUp.companyName,
+          cvr: companySignUp.cvr,
+          user: {
+            company_name: companySignUp.companyName,
+            name: companySignUp.name,
+            username: companySignUp.username,
+            password: password1,
+            email: companySignUp.email
+          }
         })
+      })
 
-        if (createCompany.status === 400) {
-            const error = await createCompany.json()
-            if (error.code === 11000) {
-                toastColor = "red"
-                toastMessage = "Company already exist"
-                toast = true
-                isLoading = false
-            }
-        } else if (createCompany.status !== 204) {
-            toastColor = "red"
-            toastMessage = "Could not create company"
-            toast = true
-            isLoading = false
-        } else {
-            toastColor = "green"
-            toastMessage = "company created, login and access resources"
-            toast = true
-            isLoading = false
+      if (createCompany.status === 400) {
+        const error = await createCompany.json()
+        if (error.code === 11000) {
+          toastColor = 'red'
+          toastMessage = 'Company already exist'
+          toast = true
+          isLoading = false
         }
+      } else if (createCompany.status !== 204) {
+        toastColor = 'red'
+        toastMessage = 'Could not create company'
+        toast = true
+        isLoading = false
+      } else {
+        toastColor = 'green'
+        toastMessage = 'company created, login and access resources'
+        toast = true
+        isLoading = false
+      }
     }
 
 </script>
-
 
 <main class="grid grid-cols-7 py-24 px-10 dark:bg-gray-700 bg-gray-200 dark:text-gray-300 text-gray-700 h-[calc(100vh-4rem)] ">
     <div class="col-start-2 col-span-3 rounded">
@@ -99,7 +96,6 @@
                                divClass="w-full mt-5 text-center p-3"
                                bind:color={toastColor}
                                simple={true}
-
 
                         >
                             {toastMessage}
@@ -127,7 +123,6 @@
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-200">User details:</h2>
                     <p class="text-gray-900 dark:text-gray-200">This will be used for ur account details</p>
                 </div>
-
 
                 <div class="grid grid-cols-2 gap-4 mb-4 p-3">
                     <div>
@@ -157,7 +152,6 @@
                 </div>
             </div>
 
-
             <div class="flex justify-between items-end">
                 <div class=" grid grid-cols-2 gap-5 w-1/2 ">
 
@@ -185,10 +179,6 @@
 
         </form>
 
-
     </div>
 
-
 </main>
-
-

@@ -1,79 +1,76 @@
 <script>
-    import {Input, Label, Select, Textarea, Button, DropdownItem, Dropdown} from "flowbite-svelte";
-    import LeadDropDownWrapper from "./LeadDropDownWrapper.svelte";
+    import { Input, Label, Select, Textarea, Button, DropdownItem, Dropdown } from 'flowbite-svelte'
+
     let form
     export let socket
 
-    export let headerTitle = "Creating new lead"
+    export let headerTitle = 'Creating new lead'
 
     export let lead = {}
 
     let fields = []
 
-    const {email, phone, name, id, category, description, ...customFields} = lead
+    const { email, phone, name, id, category, description, ...customFields } = lead
 
     const fieldsFromLead = Object.keys(customFields).map(field => {
-        return {
-            type: 'text',
-            name: field,
-        }
+      return {
+        type: 'text',
+        name: field
+      }
     })
 
     fields = [...fields, ...fieldsFromLead]
 
-
     let categoriesModal = [
-        {value: "new", name: "New"},
-        {value: "called", name: "Called"},
-        {value: "ready", name: "Ready"},
-        {value: "waiting", name: "Waiting"},
-        {value: "waiting", name: "Done"},
-    ];
+      { value: 'new', name: 'New' },
+      { value: 'called', name: 'Called' },
+      { value: 'ready', name: 'Ready' },
+      { value: 'waiting', name: 'Waiting' },
+      { value: 'waiting', name: 'Done' }
+    ]
 
     export const submit = (type) => {
-        if (!form.checkValidity()){
-            form.reportValidity()
-            return false
-        } else {
-            socket.emit(`${type} lead`, lead)
-            return true
+      if (!form.checkValidity()) {
+        form.reportValidity()
+        return false
+      } else {
+        socket.emit(`${type} lead`, lead)
+        return true
+      }
+    }
+
+    function editTextField (i) {
+      fields[i].name = customFieldName
+      customFieldName = ''
+      fields = [...fields]
+    }
+
+    function deleteTextField (i) {
+      const field = fields[i].name
+      delete lead[field]
+      const data = {
+        lead,
+        field
+      }
+
+      socket.emit('delete field', data)
+      fields.splice(i, 1)
+      fields = [...fields]
+    }
+
+    function createTextField () {
+      if (customFieldName) {
+        const field = {
+          type: 'text',
+          name: customFieldName
         }
+        lead[customFieldName] = ''
+        customFieldName = ''
+        fields = [...fields, field]
+      }
     }
 
-    function editTextField(i) {
-        fields[i].name = customFieldName
-        customFieldName = ""
-        fields = [...fields]
-    }
-
-    function deleteTextField(i) {
-        const field = fields[i].name
-        delete lead[field]
-        const data = {
-            lead,
-            field
-        }
-
-        socket.emit("delete field", data)
-        fields.splice(i, 1)
-        fields = [...fields]
-    }
-
-
-    function createTextField() {
-        if (customFieldName) {
-            const field = {
-                type: 'text',
-                name: customFieldName,
-            };
-            lead[customFieldName] = ""
-            customFieldName = ""
-            fields = [...fields, field];
-        }
-    }
-
-    let customFieldName = ""
-
+    let customFieldName = ''
 
 </script>
 
@@ -90,8 +87,6 @@
                        required/>
             </Label>
 
-
-
             <Label class="space-y-2 mb-3">
                 <span>Email</span>
                 <Input bind:value={lead.email}
@@ -105,7 +100,7 @@
                 <span>Phone</span>
                 <Input type="tel" name="phone" placeholder="151231232"
                        bind:value={lead.phone}
-                    />
+                />
             </Label>
 
             <Label class="space-y-2 mb-2">
@@ -143,7 +138,7 @@
                                 </Label>
                             </div>
 
-                            <LeadDropDownWrapper value="{i}">
+                            <Dropdown>
                                 <DropdownItem class="flex justify-between">
                                     <p>Edit</p>
                                     <p>></p>
@@ -154,19 +149,18 @@
                                         <Input bind:value={customFieldName} type="text" id="field-name"
                                                placeholder="Field name" required/>
                                     </DropdownItem>
-                                    <DropdownItem on:click={() =>  { editTextField(i) }} slot="footer">edit
+                                    <DropdownItem on:click={() => { editTextField(i) }} slot="footer">edit
                                     </DropdownItem>
                                 </Dropdown>
-                                <DropdownItem on:click={() =>  {deleteTextField(i) }}
+                                <DropdownItem on:click={() => { deleteTextField(i) }}
                                               class="flex items-baseline justify-between">
                                     <p>Delete</p>
                                 </DropdownItem>
-                            </LeadDropDownWrapper>
+                            </Dropdown>
                         </div>
 
                     {/each}
                 </div>
-
 
                 <div class="mt-5 flex items-center justify-between border-t pt-3">
                     <Label class="">
@@ -196,8 +190,7 @@
 
             </div>
 
-
-                <slot/>
+            <slot/>
 
         </div>
     </div>

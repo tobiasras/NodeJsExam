@@ -1,5 +1,5 @@
 <script>
-  import { Link } from "svelte-navigator";
+  import { Link } from 'svelte-navigator'
 </script>
 
 <main
@@ -27,8 +27,6 @@
     <p class="mt-2 w-4/5 dark:text-gray-300 text-gray-700">
       Our team at ColdCanvas is dedicated to your success. We provide comprehensive training and support to ensure you have the skills and knowledge to make the most of our platform. Whether you're a seasoned sales professional or new to cold calling, we're here to guide you every step of the way.
     </p>
-
-
 
     <hr class="border border-white dark:border-gray-800 mt-5" />
 

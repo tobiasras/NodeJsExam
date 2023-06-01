@@ -1,12 +1,8 @@
 <script>
-  import { Card, Button, Toggle } from "flowbite-svelte";
-  import {Link} from "svelte-navigator";
-
-
-
+  import { Card } from 'flowbite-svelte'
+  import { Link } from 'svelte-navigator'
 
 </script>
-
 
 <div class="col-start-1 col-span-5 p-5">
 
@@ -21,9 +17,6 @@
                 </Card>
             </Link>
 
-
     </div>
 
-
 </div>
-

@@ -1,47 +1,46 @@
 <script>
-    import {Button, Card, Spinner} from "flowbite-svelte";
-    import {Router, Route, Link, useNavigate} from "svelte-navigator";
-    import DashboardPage from "../dashboardPage/DashboardPage.svelte";
-    import TeamPage from "../teamPage/TeamPage.svelte";
-    import ToolsPage from "../toolsPage/ToolsPage.svelte";
-    import CallPage from "../callPage/CallPage.svelte";
-    import {userStore} from "../../../stores/userStore";
-    import ArchivePage from "../archivePage/ArchivePage.svelte";
-    import io from "socket.io-client";
-    import {BASE_URL} from "../../../stores/globalStore.js";
-    import {accessToken} from "../../../lib/accessToken.js";
-    import NavMenu from "../../../components/NavMenu.svelte";
+    import { Button, Card, Spinner } from 'flowbite-svelte'
+    import { Router, Route, Link, useNavigate } from 'svelte-navigator'
+    import DashboardPage from '../dashboardPage/DashboardPage.svelte'
+    import TeamPage from '../teamPage/TeamPage.svelte'
+    import ToolsPage from '../toolsPage/ToolsPage.svelte'
+    import CallPage from '../callPage/CallPage.svelte'
+    import { userStore } from '../../../stores/userStore'
+    import ArchivePage from '../archivePage/ArchivePage.svelte'
+    import io from 'socket.io-client'
+    import { BASE_URL } from '../../../stores/globalStore.js'
+    import { accessToken } from '../../../lib/accessToken.js'
+    import NavMenu from '../../../components/NavMenu.svelte'
 
     if (!$userStore) {
-        const navigate = useNavigate();
-        navigate('/')
+      const navigate = useNavigate()
+      navigate('/')
     }
-    async function connectSocket() {
-        const token = await accessToken();
-        return new Promise((resolve, reject) => {
-            const socket = io(`${$BASE_URL}/${$userStore.company}`, {
-                auth: {
-                    token: token
-                }
-            });
+    async function connectSocket () {
+      const token = await accessToken()
+      return new Promise((resolve, reject) => {
+        const socket = io(`${$BASE_URL}/${$userStore.company}`, {
+          auth: {
+            token
+          }
+        })
 
-            socket.on('connect_error', function(err) {
-                reject(new Error('Could not connect to socket: ' + err));
-            });
+        socket.on('connect_error', function (err) {
+          reject(new Error('Could not connect to socket: ' + err))
+        })
 
-            socket.on('connect', () => {
-                resolve(socket);
-            });
-        });
+        socket.on('connect', () => {
+          resolve(socket)
+        })
+      })
     }
 
-    function reload() {
-        location.reload()
+    function reload () {
+      location.reload()
     }
-    
-    let promise = connectSocket()
+
+    const promise = connectSocket()
 </script>
-
 
 <main class=" bg-neutral-200 dark:bg-gray-700">
     <div class="grid grid-cols-12">
@@ -102,7 +101,6 @@
             </Card>
         </div>
     {/await}
-
 
         <NavMenu/>
     </div>

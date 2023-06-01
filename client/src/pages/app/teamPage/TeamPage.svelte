@@ -1,107 +1,97 @@
 <script>
     import {
-        Button,
-        Modal,
-        Label,
-        Input,
-        Select, Spinner, Toast,
-    } from "flowbite-svelte";
-    import PersonCard from "../../../components/PersonCard.svelte";
-    import {onDestroy, onMount} from "svelte";
-    import {blur} from "svelte/transition";
-    import {Link} from "svelte-navigator";
-    import {BASE_URL} from "../../../stores/globalStore.js";
-    import {accessToken} from "../../../lib/accessToken.js";
-    import {userStore} from "../../../stores/userStore.js";
+      Button,
+      Modal,
+      Label,
+      Input,
+      Spinner, Toast
+    } from 'flowbite-svelte'
+    import PersonCard from '../../../components/PersonCard.svelte'
+    import { onDestroy, onMount } from 'svelte'
+    import { blur } from 'svelte/transition'
+    import { BASE_URL } from '../../../stores/globalStore.js'
+    import { accessToken } from '../../../lib/accessToken.js'
+    import { userStore } from '../../../stores/userStore.js'
 
     export let socket
     let users
     let isLoading = true
     onMount(() => {
-        socket.emit("load teampage")
-        socket.on("initial load teampage", (data) => {
-            users = data
-            isLoading = false
-        })
+      socket.emit('load teampage')
+      socket.on('initial load teampage', (data) => {
+        users = data
+        isLoading = false
+      })
     })
 
     onDestroy(() => {
-        socket.off("initial load teampage")
-    });
+      socket.off('initial load teampage')
+    })
 
-
-    function createUser() {
-        createModal = true
+    function createUser () {
+      createModal = true
     }
 
-    let createModal = false;
-
+    let createModal = false
 
     let toast = false
     let toastColor
     let toastMessage
 
-    let userSignUp = {}
+    const userSignUp = {}
 
-    let password1 = "skc69ewg"
-    let password2 = "skc69ewg"
+    let password1 = 'skc69ewg'
+    let password2 = 'skc69ewg'
 
-    let isLoadingCreateUser = false
-
-
-    async function submit() {
-        isLoadingCreateUser = true
-        if (password1 !== password2 && password1.length > 8) {
-            toastColor = "red"
-            toastMessage = "not valid password"
-            toast = true
-            isLoadingCreateUser = false
-            return
+    async function submit () {
+      if (password1 !== password2 && password1.length > 8) {
+        toastColor = 'red'
+        toastMessage = 'not valid password'
+        toast = true
+        return
+      }
+      const checkUsername = await fetch(`${$BASE_URL}/api/users?username=${userSignUp.username}`, {
+        headers: {
+          authorization: `bearer ${await accessToken()}`
         }
-        const checkUsername = await fetch(`${$BASE_URL}/api/users?username=${userSignUp.username}`,{
-            headers: {
-                    "authorization": `bearer ${await accessToken()}`
-            }
+      })
+
+      if (checkUsername.status !== 204) {
+        toastColor = 'red'
+        toastMessage = 'dublicate username'
+        toast = true
+        return
+      }
+
+      const createUser = await fetch(`${$BASE_URL}/api/users/${$userStore.company}`, {
+        method: 'POST',
+        headers: {
+          'content-Type': 'application/json',
+          authorization: `bearer ${await accessToken()}`
+        },
+        body: JSON.stringify({
+          company_name: $userStore.company,
+          name: userSignUp.name,
+          username: userSignUp.username,
+          password: password1,
+          email: userSignUp.email
         })
+      })
 
-        if (checkUsername.status !== 204) {
-            toastColor = "red"
-            toastMessage = "dublicate username"
-            toast = true
-            isLoadingCreateUser = false
-            return
-        }
+      if (createUser.status !== 200) {
+        toastColor = 'red'
+        toastMessage = 'Could not create user'
+        toast = true
+        isLoading = false
+      } else {
+        toastColor = 'green'
+        toastMessage = 'company created, login and access resources'
+        toast = true
+        isLoading = false
+      }
 
-        const createUser = await fetch(`${$BASE_URL}/api/users/${$userStore.company}`, {
-            method: "POST",
-            headers: {
-                "content-Type": "application/json",
-                "authorization": `bearer ${await accessToken()}`
-            },
-            body: JSON.stringify({
-                company_name: $userStore.company,
-                name: userSignUp.name,
-                username: userSignUp.username,
-                password: password1,
-                email: userSignUp.email
-            })
-        })
-
-        if (createUser.status !== 200) {
-            toastColor = "red"
-            toastMessage = "Could not create user"
-            toast = true
-            isLoading = false
-        } else {
-            toastColor = "green"
-            toastMessage = "company created, login and access resources"
-            toast = true
-            isLoading = false
-        }
-
-        socket.emit("load teampage")
+      socket.emit('load teampage')
     }
-
 
 </script>
 
@@ -124,7 +114,6 @@
             </div>
         {/if}
     </div>
-
 
     <Modal bind:open={createModal} size="md" autoclose={false} class="w-full">
         <form on:submit|preventDefault={submit}
@@ -163,8 +152,6 @@
                     </div>
                 </div>
 
-
-
                 <div class="grid gap-4 mb-4 w-1/2 ">
                     <div>
                         <Label for='brand' class='mb-2'>Password  [ password must be longer than 8 ]</Label>
@@ -178,7 +165,6 @@
                 </div>
             </div>
 
-
             <div class="flex justify-between items-end mt-5">
                 <div class=" grid grid-cols-2 gap-5 w-1/2 ">
 
@@ -187,12 +173,10 @@
                         <p class="text-gray-800 dark:text-gray-200">Signup</p>
                     </Button>
 
-
-                    <Button on:click={() => createModal = false}
+                    <Button on:click={() => { createModal = false }}
                             class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900  ">
                         <p class="text-gray-800 dark:text-gray-200">Go back</p>
                     </Button>
-
 
                 </div>
 
@@ -207,7 +191,6 @@
 
         </form>
     </Modal>
-
 
     <div class="absolute bottom-20 left-0 right-5 w-10/12 flex justify-end mb-5">
         <button class="absolute mr-10 bg-[#4285F4] hover:bg-[#2557D6]/90 p-5 rounded-full w-16 h-16 flex-col justify-center items-center"

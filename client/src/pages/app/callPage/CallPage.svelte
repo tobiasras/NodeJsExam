@@ -1,72 +1,67 @@
 <script>
-    import {useParams} from "svelte-navigator";
-    import {onDestroy} from "svelte";
-    import {Button, Card, DropdownItem, Input, Modal, Spinner, Textarea, Toast, Toggle} from "flowbite-svelte";
+    import { useParams } from 'svelte-navigator'
+    import { onDestroy } from 'svelte'
+    import { Button, Card, Dropdown, DropdownItem, Modal, Spinner, Textarea, Toggle } from 'flowbite-svelte'
     import SvelteMarkdown from 'svelte-markdown'
-    import LeadDropDownWrapper from "../../../components/LeadDropDownWrapper.svelte";
-    import LeadForm from "../../../components/LeadForm.svelte";
+    import LeadForm from '../../../components/LeadForm.svelte'
 
+    export let socket
 
-    export let socket;
-
-    let leadID;
-    const params = useParams();
+    let leadID
+    const params = useParams()
     params.subscribe((path) => {
-        leadID = path.lead;
-    });
+      leadID = path.lead
+    })
 
-    let lead;
+    let lead
 
-    let isLoaded = false;
+    let isLoaded = false
 
     let otherFields
 
+    socket.emit('load call', leadID)
 
-    socket.emit("load call", leadID);
+    socket.on('initial load call', (data) => {
+      lead = data
+      const { description, name, email, category, phone, id, ...other } = lead
+      otherFields = other
 
-    socket.on("initial load call", (data) => {
-        lead = data;
-        const {description, name, email, category, phone, id, ...other} = lead
-        otherFields = other
-
-        isLoaded = true;
-    });
+      isLoaded = true
+    })
 
     onDestroy(() => {
-        socket.off("initial load call")
-    });
-
+      socket.off('initial load call')
+    })
 
     let toggleMdEditor = true
 
-    function saveLead() {
-        socket.emit(`update lead`, lead)
-        toggleMdEditor = true
+    function saveLead () {
+      socket.emit('update lead', lead)
+      toggleMdEditor = true
     }
 
     // MODALS
-    let modalUpdateLead = false;
+    let modalUpdateLead = false
 
     let submitUpdateLead
 
     let updatedLead
 
-    function modalShowUpdateLead() {
-        updatedLead = lead
-        modalUpdateLead = true
+    function modalShowUpdateLead () {
+      updatedLead = lead
+      modalUpdateLead = true
     }
 
-    function saveModalUpdate() {
-        if (submitUpdateLead("update")) {
-            modalUpdateLead = false
-            socket.emit("load call", leadID);
-        }
+    function saveModalUpdate () {
+      if (submitUpdateLead('update')) {
+        modalUpdateLead = false
+        socket.emit('load call', leadID)
+      }
     }
 
-    function deleteLead(lead) {
-        socket.emit("delete lead", lead)
+    function deleteLead (lead) {
+      socket.emit('delete lead', lead)
     }
-
 
 </script>
 
@@ -81,18 +76,17 @@
                             Name: {lead.name}
                         </h5>
 
-                        <LeadDropDownWrapper value={lead}>
-                            <DropdownItem on:click={() => {modalShowUpdateLead(lead)}}>
+                        <Dropdown >
+                            <DropdownItem on:click={() => { modalShowUpdateLead(lead) }}>
                                 Edit
                             </DropdownItem>
 
-                            <DropdownItem on:click={() => {deleteLead(lead)}}>
+                            <DropdownItem on:click={() => { deleteLead(lead) }}>
                                 Delete
                             </DropdownItem>
 
-                        </LeadDropDownWrapper>
+                        </Dropdown>
                     </div>
-
 
                     <div class="py-3 mt-3 border-t border-gray-300 dark:border-gray-700">
 
@@ -119,10 +113,6 @@
                         {/each}
                     </div>
                 </Card>
-
-                <div class="p-3 text-gray-900 dark:text-gray-200">
-                    <h1 class="text-4xl font-semibold"></h1>
-                </div>
             </div>
 
             <div class="col-span-3 ">
@@ -133,7 +123,7 @@
                         <div class="flex justify-between">
                             <p class="pr-3 font-bold dark:text-gray-200">Edit</p>
 
-                            <Toggle on:click={() => {toggleMdEditor = !toggleMdEditor}}></Toggle>
+                            <Toggle on:click={() => { toggleMdEditor = !toggleMdEditor }}></Toggle>
                         </div>
                     </div>
                 </div>
@@ -158,7 +148,6 @@
                 </div>
             </div>
 
-
         </div>
 
         <!-- UPDATE LEAD MODAL-->
@@ -181,7 +170,6 @@
                 </div>
             </LeadForm>
         </Modal>
-
 
     {:else}
         <div class="flex justify-center items-center h-full">

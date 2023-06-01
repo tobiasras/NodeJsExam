@@ -1,57 +1,54 @@
 <script>
-    import {Card, MenuButton, Dropdown, DropdownItem, Modal, Button, Label, Input, Select} from "flowbite-svelte";
-    import LeadDropDownWrapper from "./LeadDropDownWrapper.svelte";
-    import {tokenData, userStore} from "../stores/userStore.js";
-    import {accessToken} from "../lib/accessToken.js";
-    import {BASE_URL} from "../stores/globalStore.js";
+    import { Card, DropdownItem, Modal, Button, Label, Input, Select, Dropdown, MenuButton } from 'flowbite-svelte'
+    import { userStore } from '../stores/userStore.js'
+    import { accessToken } from '../lib/accessToken.js'
+    import { BASE_URL } from '../stores/globalStore.js'
 
-    export let user;
+    export let user
 
-    let roles = [
-        {value: "admin", name: "Admin"},
-        {value: "user", name: "User"},
+    const roles = [
+      { value: 'admin', name: 'Admin' },
+      { value: 'user', name: 'User' }
     ]
-    export let socket;
+    export let socket
 
     let edit = false
 
-    function submit() {
-        const {_id, ...other} = user
+    function submit () {
+      const { _id, ...other } = user
 
-        const data = {
-            user: other
-        }
+      const data = {
+        user: other
+      }
 
-        accessToken().then(value => {
-            data.sender = value
-            socket.emit("update user", data)
-        })
+      accessToken().then(value => {
+        data.sender = value
+        socket.emit('update user', data)
+      })
 
-        socket.on("error update user", () => {
-            alert("No access to delete user")
-        })
-        edit = false
+      socket.on('error update user', () => {
+        alert('No access to delete user')
+      })
+      edit = false
     }
 
-    async function deleteUser(user) {
-        const res = await fetch(`${$BASE_URL}/api/users/${$userStore.company}/${user.username}`,{
-            method: "DELETE",
-            headers: {
-                "content-Type": "application/json",
-                    "authorization": `bearer ${await accessToken()}`
-            },
-        })
-
-        if (res.status === 204) {
-            socket.emit("load teampage")
+    async function deleteUser (user) {
+      const res = await fetch(`${$BASE_URL}/api/users/${$userStore.company}/${user.username}`, {
+        method: 'DELETE',
+        headers: {
+          'content-Type': 'application/json',
+          authorization: `bearer ${await accessToken()}`
         }
-    }
+      })
 
+      if (res.status === 204) {
+        socket.emit('load teampage')
+      }
+    }
 
     let warningModal = false
 
 </script>
-
 
 <Card size="lg">
     <Modal bind:open={warningModal} size="xs" autoclose>
@@ -64,14 +61,12 @@
             <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete
                 this product?</h3>
 
-
             <Button on:click={() => deleteUser(user)} color="gray"
                     class="mr-2 text-gray-200 bg-gray-700 hover:bg-gray-900">Yes, I'm sure
             </Button>
             <Button class="text-gray-200 bg-gray-700 hover:bg-gray-900">No, cancel</Button>
         </div>
     </Modal>
-
 
     {#if !edit}
         {#if user.role}
@@ -83,10 +78,13 @@
             {user.username}
         </h5>
 
-        <LeadDropDownWrapper value={edit}>
-            <DropdownItem on:click={() => edit = !edit }>Edit</DropdownItem>
-            <DropdownItem on:click={() => warningModal = true} >Delete</DropdownItem>
-        </LeadDropDownWrapper>
+        <MenuButton class="dots-menu dark:text-white" vertical/>
+
+        <Dropdown>
+            <DropdownItem on:click={() => { edit = !edit } } >Edit</DropdownItem>
+            <DropdownItem on:click={() => { warningModal = true } }> Delete</DropdownItem>
+        </Dropdown>
+
     </div>
 
     <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
@@ -99,7 +97,6 @@
             Editing member: {user.username}
         </h3>
         <div class="grid grid-col-6 gap-5">
-
 
             <div class="col-start-1 col-span-3">
                 <Label class="space-y-2 mb-3">
@@ -133,7 +130,7 @@
                 <div class="flex justify-end">
 
                     <Button
-                            on:click={() => edit = !edit}
+                            on:click={() => { edit = !edit } }
                             class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
                     >Decline
                     </Button>
@@ -148,8 +145,3 @@
     </form>
         {/if}
 </Card>
-
-
-
-
-

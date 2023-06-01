@@ -5,105 +5,101 @@
     Label,
     Input,
     Spinner,
-    Toast,
-  } from "flowbite-svelte";
-  import { BASE_URL } from "../stores/globalStore";
-  import { tokenData, userStore } from "../stores/userStore";
-  import { blur } from 'svelte/transition';
-  async function login() {
-    spinner = true;
+    Toast
+  } from 'flowbite-svelte'
+  import { BASE_URL } from '../stores/globalStore'
+  import { tokenData, userStore } from '../stores/userStore'
+  import { blur } from 'svelte/transition'
+  async function login () {
+    spinner = true
 
     const body = JSON.stringify({
       username,
-      password,
-    });
-
+      password
+    })
 
     let result
 
     try {
       result = await fetch(`${$BASE_URL}/api/login`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body,
-    });
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body
+      })
     } catch (e) {
-      error("Could not connect to server")
+      error('Could not connect to server')
       spinner = false
       return
     }
 
-    spinner = false;
+    spinner = false
 
     switch (result.status) {
       case 200:
-        success(await result.json());
-        break;
+        success(await result.json())
+        break
 
       case 401:
-        error("could not authenticate user");
-        break;
+        error('could not authenticate user')
+        break
 
       case 429:
-        error("too many request");
-        break;
+        error('too many request')
+        break
       default:
     }
   }
 
-  function onClose() {
-    username = "";
-    password = "";
-    formModal = false;
+  function onClose () {
+    username = ''
+    password = ''
+    formModal = false
   }
 
-  function success(bodyFromResponse) {
-    toastColor = "green";
-    toastMessage = "Success";
-    toast = true;
+  function success (bodyFromResponse) {
+    toastColor = 'green'
+    toastMessage = 'Success'
+    toast = true
 
     const { username, company, role } = bodyFromResponse
     userStore.set({ username, company, role })
-    
-    const { accessToken, refreshToken, expires } = bodyFromResponse.token;
+
+    const { accessToken, refreshToken, expires } = bodyFromResponse.token
 
     tokenData.set({
       expireDate: new Date(expires),
-      accessToken: accessToken,
-      refreshToken: refreshToken
+      accessToken,
+      refreshToken
     })
 
     onClose()
   }
 
-  function error(errorMessage) {
-    toastColor = "red";
-    toastMessage = errorMessage;
-    toast = true;
+  function error (errorMessage) {
+    toastColor = 'red'
+    toastMessage = errorMessage
+    toast = true
 
     hideToast()
   }
 
-  let counter = 5;
-  function hideToast() {
-    if (--counter > 0)
-      return setTimeout(hideToast, 1000);
-    toast = false;
+  let counter = 5
+  function hideToast () {
+    if (--counter > 0) { return setTimeout(hideToast, 1000) }
+    toast = false
     counter = 5
   }
 
+  export let formModal = false
 
-
-  export let formModal = false;
-
-  let toast = false;
-  let toastColor;
-  let toastMessage;
-  let username = "tofu";
-  let password = "00000000";
-  let spinner = false;
+  let toast = false
+  let toastColor
+  let toastMessage
+  let username = 'tofu'
+  let password = '00000000'
+  let spinner = false
 </script>
 
 <Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
@@ -117,7 +113,7 @@
         divClass="w-full p-3 text-center"
         bind:color={toastColor}
         simple={true}
-        
+
       >
         {toastMessage}
       </Toast>

@@ -1,26 +1,25 @@
 <script>
-    import {Button, Dropdown, DropdownItem} from "flowbite-svelte";
-    import {Link, useNavigate} from "svelte-navigator";
-    import {userStore, tokenData} from "../stores/userStore";
-    import {BASE_URL} from "../stores/globalStore.js";
+    import { Button, Dropdown, DropdownItem } from 'flowbite-svelte'
+    import { Link, useNavigate } from 'svelte-navigator'
+    import { userStore, tokenData } from '../stores/userStore'
+    import { BASE_URL } from '../stores/globalStore.js'
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
-
-    async function logout() {
-        await fetch(`${$BASE_URL}/api/logout`, {
-            method: "DELETE",
-            headers: {
-                "content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                token: $tokenData.refreshToken
-            })
+    async function logout () {
+      await fetch(`${$BASE_URL}/api/logout`, {
+        method: 'DELETE',
+        headers: {
+          'content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          token: $tokenData.refreshToken
         })
+      })
 
-        userStore.set("")
-        tokenData.set("")
-        navigate('/')
+      userStore.set('')
+      tokenData.set('')
+      navigate('/')
     }
 
 </script>

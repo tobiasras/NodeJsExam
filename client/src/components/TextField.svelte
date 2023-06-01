@@ -1,9 +1,8 @@
 <script>
-    import {Input, Label} from "flowbite-svelte";
+    import { Input, Label } from 'flowbite-svelte'
     export let name
     export let value
 </script>
-
 
 <Label class="space-y-2 mb-3">
     <span>{name}</span>

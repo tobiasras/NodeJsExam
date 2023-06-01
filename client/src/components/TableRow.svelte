@@ -1,16 +1,15 @@
 <script>
-    import {Button, Modal, TableBodyCell, TableBodyRow} from "flowbite-svelte";
-    import Leadform from "./LeadForm.svelte";
+    import { TableBodyCell, TableBodyRow } from 'flowbite-svelte'
 
-    export let lead = ""
+    export let lead = ''
 
-    const {category, email, name, phone, id, description, ...otherFields} = lead
-    let specific = {name, email, phone, category}
+    const { category, email, name, phone, id } = lead
 
+    const specific = { name, email, phone, category }
 
-    const row = {...specific}
+    const row = { ...specific }
 
-    let fields = Object.keys(row)
+    const fields = Object.keys(row)
 
 </script>
 
@@ -21,10 +20,8 @@
     </TableBodyCell>
 
     {#each fields as field }
-        <TableBodyCell>{lead[field] || ""}</TableBodyCell>
+        <TableBodyCell>{lead[field] || ''}</TableBodyCell>
     {/each}
-
-
 
     <slot>
 

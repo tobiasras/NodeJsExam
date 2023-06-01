@@ -1,9 +1,9 @@
 <script>
-  import { Link } from "svelte-navigator";
-  import {Button, DarkMode, Dropdown, DropdownItem} from "flowbite-svelte";
-  import LoginModal from "./LoginModal.svelte";
-  import { userStore } from "../stores/userStore";
-  import UserInfoNav from "./UserInfoNav.svelte";  
+  import { Link } from 'svelte-navigator'
+  import { Button, DarkMode, Dropdown, DropdownItem } from 'flowbite-svelte'
+  import LoginModal from './LoginModal.svelte'
+  import { userStore } from '../stores/userStore'
+  import UserInfoNav from './UserInfoNav.svelte'
 
   let loginModal
 </script>
@@ -19,13 +19,6 @@
 
       <div class="col-start-5 col-span-2 ">
         <ul class="flex justify-start">
-          <li>
-            <Link to="/">
-              <Button class="bg-gray-200 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-800  mr-3   h-full ">
-                <p class="text-gray-800 dark:text-gray-200">About</p>
-              </Button>
-            </Link>
-          </li>
 
           <li class="mr-3">
             <Link to="/signup">
@@ -64,16 +57,15 @@
                 </DropdownItem>
               </Link>
 
-              <Link to="/app/profile">
+              <Link to="/app/archive">
                 <DropdownItem class="hover:bg-gray-400">
-                  <p>Profile</p>
+                  <p>Archive</p>
                 </DropdownItem>
               </Link>
             </Dropdown>
           </li>
 
         </ul>
-
 
       </div>
 
@@ -93,14 +85,6 @@
 
           <DarkMode btnClass="dark:bg-neutral-100 ml-2 w-10  bg-neutral-800 p-2 rounded-lg text-neutral-50 dark:text-gray-800" />
         </div>
-
-
-
-
-
-
-
-
 
       </div>
     </div>

@@ -1,136 +1,125 @@
 <script>
     import {
-        Table,
-        TableBody,
-        TableHead,
-        TableHeadCell,
-        Button,
-        Modal, TableBodyCell, TableBodyRow, DropdownItem, Input, MenuButton, Dropdown
-    } from "flowbite-svelte";
-    import {onDestroy, onMount} from "svelte";
-    import LeadForm from "../../../components/LeadForm.svelte";
-    import TableRow from "../../../components/TableRow.svelte";
-    import {Link} from "svelte-navigator";
+      Table, TableBody, TableHead, TableHeadCell, Button, Modal, TableBodyCell, TableBodyRow, DropdownItem, Input, MenuButton, Dropdown
+    } from 'flowbite-svelte'
+    import { onDestroy, onMount } from 'svelte'
+    import LeadForm from '../../../components/LeadForm.svelte'
+    import TableRow from '../../../components/TableRow.svelte'
+    import { Link } from 'svelte-navigator'
 
     $: allLeads = []
     export let socket
 
     onMount(() => {
-        updateLeadCache = ""
-        socket.emit("load company data")
+      updateLeadCache = ''
+      socket.emit('load company data')
     })
 
     onDestroy(() => {
-        socket.off("company data")
-        socket.off("lead changes")
-    });
-
-    socket.on("company data", (data) => {
-        if (data.company.leads) {
-            allLeads = data.company.leads
-        }
+      socket.off('company data')
+      socket.off('lead changes')
     })
 
-    socket.on("lead changes", (leadChanges) => {
-        switch (leadChanges.type) {
-            case "update":
-                const keysFromUpdate = Object.keys(leadChanges.changes);
-                for (let i = 0; i < keysFromUpdate.length; i++) {
-                    const indexOfElement = allLeads.findIndex(lead => lead.id === keysFromUpdate[i]);
-                    if (indexOfElement > -1) {
-                        allLeads[indexOfElement] = leadChanges.changes[keysFromUpdate[i]]
-                    }
-                }
-                allLeads = [...allLeads];
-                break;
-            case "create":
-                console.log(leadChanges)
-                allLeads.push(...leadChanges.changes)
-                allLeads = [...allLeads];
-                break
-            case "delete":
-                const indexOfElement = allLeads.findIndex(lead => lead.id === leadChanges.data.id);
-
-                if (indexOfElement !== -1) {
-                    allLeads.splice(indexOfElement, 1)
-                }
-                allLeads = [...allLeads];
-                break
-        }
+    socket.on('company data', (data) => {
+      if (data.company.leads) {
+        allLeads = data.company.leads
+      }
     })
 
+    socket.on('lead changes', (leadChanges) => {
+      if (leadChanges.type === 'update') {
+        const keysFromUpdate = Object.keys(leadChanges.changes)
+        for (let i = 0; i < keysFromUpdate.length; i++) {
+          const indexOfElement = allLeads.findIndex(lead => lead.id === keysFromUpdate[i])
+          if (indexOfElement > -1) {
+            allLeads[indexOfElement] = leadChanges.changes[keysFromUpdate[i]]
+          }
+        }
+        allLeads = [...allLeads]
+      } else if (leadChanges.type === 'create') {
+        console.log(leadChanges)
+        allLeads.push(...leadChanges.changes)
+        allLeads = [...allLeads]
+      } else if (leadChanges.type === 'delete') {
+        const indexOfElement = allLeads.findIndex(lead => lead.id === leadChanges.data.id)
+
+        if (indexOfElement !== -1) {
+          allLeads.splice(indexOfElement, 1)
+        }
+        allLeads = [...allLeads]
+      }
+    })
 
     // MODALS
-    let modalCreateLead = false;
-    let modalUpdateLead = false;
+    let modalCreateLead = false
+    let modalUpdateLead = false
 
     let submitCreateLead
     let submitUpdateLead
     let updateLeadCache
 
-    function modalShowCreateLead() {
-        modalCreateLead = true
+    function modalShowCreateLead () {
+      modalCreateLead = true
     }
 
-    function saveModalCreate() {
-        if (submitCreateLead("create")) {
-            modalCreateLead = false
-        }
+    function saveModalCreate () {
+      if (submitCreateLead('create')) {
+        modalCreateLead = false
+      }
     }
 
-    function modalShowUpdateLead(lead) {
-        updateLeadCache = lead
-        modalUpdateLead = true
+    function modalShowUpdateLead (lead) {
+      updateLeadCache = lead
+      modalUpdateLead = true
     }
 
-    function saveModalUpdate() {
-        if (submitUpdateLead("update")) {
-            modalUpdateLead = false
-        }
+    function saveModalUpdate () {
+      if (submitUpdateLead('update')) {
+        modalUpdateLead = false
+      }
     }
 
-    function deleteLead(lead) {
-        socket.emit("archive lead", lead)
+    function deleteLead (lead) {
+      socket.emit('archive lead', lead)
     }
 
-    let searchQuery = "";
+    let searchQuery = ''
 
     $: filteredLeads = allLeads.filter(lead =>
-        lead.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.category.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
-
     let sortedField = null
     let sortOrder = true // true for ascending, false for descending
 
-    function sortLeads(field) {
-        if (sortedField === field) {
-            sortOrder = !sortOrder
-        } else {
-            sortedField = field
-            sortOrder = true
-        }
-        allLeads.sort((a, b) => {
-            if (a[field] < b[field]) return sortOrder ? -1 : 1
-            if (a[field] > b[field]) return sortOrder ? 1 : -1
-            return 0
-        })
-        allLeads = [...allLeads]
+    function sortLeads (field) {
+      if (sortedField === field) {
+        sortOrder = !sortOrder
+      } else {
+        sortedField = field
+        sortOrder = true
+      }
+      allLeads.sort((a, b) => {
+        if (a[field] < b[field]) return sortOrder ? -1 : 1
+        if (a[field] > b[field]) return sortOrder ? 1 : -1
+        return 0
+      })
+      allLeads = [...allLeads]
     }
 
 </script>
-
 
 <div class="col-start-1 col-span-10 px-5 pt-5 h-[calc(100vh-5rem)]">
 
     <!-- CREATE LEAD MODAL-->
     <Modal bind:open={modalCreateLead} size="lg" autoclose={false} class="w-full">
-        <LeadForm bind:submit={submitCreateLead}
-                  bind:socket={socket}>
+        <LeadForm
+                bind:submit={submitCreateLead}
+                bind:socket={socket}>
             <div class="flex justify-end">
                 <Button on:click={() => { modalCreateLead = false }}
                         class="dark:bg-gray-700 dark:hover:bg-gray-900 text-gray-800 hover:bg-gray-700 bg-gray-600 mr-3"
@@ -165,7 +154,6 @@
             </div>
         </LeadForm>
     </Modal>
-
 
     <Table divClass="relative overflow-y-auto bg-gray-100 dark:bg-gray-800 h-4/5 ">
         <caption
@@ -203,15 +191,15 @@
         </TableHead>
 
         <TableBody>
-            {#each filteredLeads as lead ,i}
+            {#each filteredLeads as lead, i}
                 <TableRow lead={lead}>
                     <TableBodyCell>
                         <MenuButton class="dots-menu dark:text-white" vertical/>
                         <Dropdown>
-                            <DropdownItem on:click={() => {modalShowUpdateLead(lead)}}>
+                            <DropdownItem on:click={() => { modalShowUpdateLead(lead) }}>
                                 Edit
                             </DropdownItem>
-                            <DropdownItem on:click={() => {deleteLead(lead)}}>
+                            <DropdownItem on:click={() => { deleteLead(lead) }}>
                                 Delete
                             </DropdownItem>
 
@@ -233,7 +221,6 @@
         </TableBody>
     </Table>
 
-
     <div class="absolute bottom-20 left-0 right-5 w-10/12 flex justify-end mb-5">
         <button class="absolute mr-10 bg-[#4285F4] hover:bg-[#2557D6]/90 p-5 rounded-full w-16 h-16 flex-col justify-center items-center"
                 on:click={modalShowCreateLead}>
@@ -243,6 +230,5 @@
         </button>
 
     </div>
-
 
 </div>

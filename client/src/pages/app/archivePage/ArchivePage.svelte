@@ -1,41 +1,39 @@
 <script>
     import {
-        Button, Dropdown,
-        DropdownItem,
-        Input, MenuButton, Modal,
-        Table,
-        TableBody,
-        TableBodyCell,
-        TableBodyRow,
-        TableHead,
-        TableHeadCell
-    } from "flowbite-svelte";
-    import TableRow from "../../../components/TableRow.svelte";
-    import {onDestroy, onMount} from "svelte";
+      Button, Dropdown,
+      DropdownItem,
+      Input, MenuButton, Modal,
+      Table,
+      TableBody,
+      TableBodyCell,
+      TableBodyRow,
+      TableHead,
+      TableHeadCell
+    } from 'flowbite-svelte'
+    import TableRow from '../../../components/TableRow.svelte'
+    import { onDestroy, onMount } from 'svelte'
 
     export let socket
 
-
     onMount(() => {
-        socket.emit("load company data")
+      socket.emit('load company data')
     })
 
     onDestroy(() => {
-        // socket.off("company data")
-    });
-
+      // socket.off("company data")
+    })
 
     $: archivedLeads = []
 
-    let searchQuery = ""
-    socket.on("company data", (data) => {
-        if (data.company.archive) {
-            archivedLeads = data.company.archive
-        }
+    let searchQuery = ''
+    socket.on('company data', (data) => {
+      if (data.company.archive) {
+        archivedLeads = data.company.archive
+      }
     })
 
     $: filteredLeads = archivedLeads.filter(lead =>
-        lead.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,36 +45,35 @@
 
     let leadCache = {}
 
-    function sortLeads(field) {
-        if (sortedField === field) {
-            sortOrder = !sortOrder
-        } else {
-            sortedField = field
-            sortOrder = true
-        }
-        archivedLeads.sort((a, b) => {
-            if (a[field] < b[field]) return sortOrder ? -1 : 1
-            if (a[field] > b[field]) return sortOrder ? 1 : -1
-            return 0
-        })
-        archivedLeads = [...archivedLeads]
+    function sortLeads (field) {
+      if (sortedField === field) {
+        sortOrder = !sortOrder
+      } else {
+        sortedField = field
+        sortOrder = true
+      }
+      archivedLeads.sort((a, b) => {
+        if (a[field] < b[field]) return sortOrder ? -1 : 1
+        if (a[field] > b[field]) return sortOrder ? 1 : -1
+        return 0
+      })
+      archivedLeads = [...archivedLeads]
     }
 
-    function deleteArchivedLead(lead) {
-        socket.emit("delete archived lead", lead)
-        removeLeadFromList(lead)
+    function deleteArchivedLead (lead) {
+      socket.emit('delete archived lead', lead)
+      removeLeadFromList(lead)
     }
 
-
-    function removeLeadFromList(leadToRemove) {
-        const index = archivedLeads.findIndex(lead => lead.id === leadToRemove.id)
-        archivedLeads.splice(index, 1)
-        archivedLeads = [...archivedLeads]
+    function removeLeadFromList (leadToRemove) {
+      const index = archivedLeads.findIndex(lead => lead.id === leadToRemove.id)
+      archivedLeads.splice(index, 1)
+      archivedLeads = [...archivedLeads]
     }
 
-    function restoreLead(lead) {
-        socket.emit("restore lead", lead)
-        removeLeadFromList(lead)
+    function restoreLead (lead) {
+      socket.emit('restore lead', lead)
+      removeLeadFromList(lead)
     }
 
     let warningModal = false
@@ -120,7 +117,7 @@
         </TableHead>
 
         <TableBody>
-            {#each filteredLeads as lead ,i}
+            {#each filteredLeads as lead, i}
                 <TableRow lead={lead}>
                     <TableBodyCell>
                         <MenuButton class="dots-menu dark:text-white" vertical/>
@@ -131,8 +128,8 @@
                             </DropdownItem>
 
                             <DropdownItem on:click={() => {
-                                warningModal = true
-                                leadCache = lead
+                              warningModal = true
+                              leadCache = lead
                             }}>
                                 Delete
                             </DropdownItem>
@@ -157,7 +154,6 @@
                 </svg>
                 <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete
                     this product?</h3>
-
 
                 <Button on:click={() => deleteArchivedLead(leadCache)} color="gray"
                         class="mr-2 text-gray-200 bg-gray-700 hover:bg-gray-900">Yes, I'm sure
