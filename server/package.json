@@ -27,8 +27,7 @@
   "scripts": {
     "start": "node app.js",
     "databaseSetup": "node database/setupDatbase.js",
-    "databaseTestData": "node database/databaseTestData.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "databaseTestData": "node database/databaseTestData.js"
   },
   "author": "tobiasras",
   "license": "ISC"

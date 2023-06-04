@@ -18,19 +18,24 @@ secure system using tokens and have developed a comprehensive user signup proces
 
 
 ## How to run the app
-the project consist of 2 node apps, Client and Server\
+prerequisite: Have node installed < v. 18.0 or higher & have the packages in installed in the client & server.
+### Client part:
 
-### Setting up Server
-prerequisite: Have node installed < v. 18.0 or higher & have the packages in installed, and be located in the server folder.
+1. **Compile svelte project.**\
+Go to client folder, and run the script:
 
 ```
- cd server
- npm -i
+ npm run build
 ```
 
-1. **Create the .env file**\
+That is it for the client part of the project
+
+
+### Server part:
+Go to Server folder
+
+2. **Create the .env file [Should be located server/.env] \
 look at the .env template for help
-
 
 2. **Run the database script**\
 This will make sure the database is connected, 
@@ -58,27 +63,6 @@ npm start
 Now the server should be running
 
 
-### Setting up CLIENT
-prerequisite: Have node installed < v. 18.0 or higher & have the packages in installed, and be located in the client folder.
-
-```
- cd client
- npm -i
-```
-
-1. Point the base url store to the server\
-located: client/src/stores/globalStore.js
-
-```
-export const BASE_URL = readable('http://localhost:8080')
-```
-
-2. Run the command:
-```
-    npm run dev
-```
-
-Now the client is booting up like production
 
 
 

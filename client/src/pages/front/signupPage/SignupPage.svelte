@@ -78,9 +78,8 @@
 
 <main class="grid grid-cols-7 py-24 px-10 dark:bg-gray-700 bg-gray-200 dark:text-gray-300 text-gray-700 h-[calc(100vh-4rem)] ">
     <div class="col-start-2 col-span-3 rounded">
-
         <form on:submit|preventDefault={submit}
-              class="flex flex-col justify-between h-3/4 bg-gray-300 dark:bg-gray-800 p-5 rounded">
+              class="flex flex-col justify-between h-3/4 bg-gray-300 dark:bg-gray-800 p-5 rounded h-full">
             <div>
                 <div class="p-3">
                     <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-200">Signup company</h1>

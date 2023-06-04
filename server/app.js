@@ -8,7 +8,7 @@ import http from 'http'
 import helmet from 'helmet'
 import { Server } from 'socket.io'
 import loadCompanies from './namespaces/companyNamespace.js'
-import { createLimiter } from './middleware/limiter.js'
+import fs from 'fs'
 
 const app = express()
 
@@ -19,7 +19,6 @@ app.use(express.json())
 
 // SOCKETS
 const server = http.createServer(app)
-
 const io = new Server(server, {
   cors: {
     origin: '*',
@@ -34,6 +33,14 @@ loadCompanies(io)
 app.use('/api', authenticationRoutes)
 app.use('/api', companiesRoutes)
 app.use('/api', usersRoutes)
+
+// PAGES
+app.use(express.static('../client/dist/'))
+const htmlPage = fs.readFileSync('../client/dist/index.html').toString()
+
+app.get('/*', (req, res) => {
+  res.send(htmlPage)
+})
 
 const port = process.env.SERVER_PORT || 8080
 server.listen(port, () => {
