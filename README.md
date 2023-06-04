@@ -37,7 +37,7 @@ Go to Server folder
 2. **Create the .env file [Should be located server/.env] \
 look at the .env template for help
 
-2. **Run the database script**\
+3. **Run the database script**\
 This will make sure the database is connected, 
 and setup important indexes in mongo db.
 
@@ -46,7 +46,7 @@ and setup important indexes in mongo db.
 npm run databaseSetup
 ```
 
-3. **[ optional ] Run the setup test-data script**\
+4. **[ optional ] Run the setup test-data script**\
 Running this script will setup some data that will better showcase the features of this app\
 **the project can be run without this.**
 
@@ -54,7 +54,7 @@ Running this script will setup some data that will better showcase the features 
 npm run databaseTestData
 ```
 
-4. Final step\
+5. Final step\
 to run the server run
 ```
 npm start
