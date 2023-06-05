@@ -141,14 +141,6 @@
       />
     </Label>
 
-    <div class="flex items-start">
-      <a
-        href="/"
-        class="ml-auto text-sm text-blue-700 hover:underline dark:text-blue-500"
-        >Lost password?</a
-      >
-    </div>
-
     <div class="flex justify-between">
       {#if spinner}
         <Spinner />

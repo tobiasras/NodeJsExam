@@ -28,7 +28,6 @@ export const namespace = (io, companyName) => {
 
   companyNamespace.on('connection', async socket => {
     leadSockets(socket, companyName, companyNamespace)
-
     socket.on('load teampage', async () => {
       const initialLoad = await db.users.find({ company_name: companyName },
         { projection: { password: 0 } }).toArray()
@@ -44,7 +43,7 @@ export const namespace = (io, companyName) => {
     })
 
     socket.on('load call', async (data) => {
-      data = new ObjectId(data) // Ensure this matches the lead ID you're looking for
+      data = new ObjectId(data)
 
       const result = await db.companies.aggregate([
         { $match: { company_name: companyName } },
@@ -67,8 +66,6 @@ export const namespace = (io, companyName) => {
     })
 
     socket.on('update user', async (data) => {
-      console.log(data)
-
       jwt.verify(data.sender, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
         if (err || user.role !== 'admin') {
           socket.emit('error update user')
