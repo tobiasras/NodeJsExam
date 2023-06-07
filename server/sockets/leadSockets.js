@@ -1,9 +1,11 @@
 import db from '../database/database.js'
 import { ObjectId } from 'mongodb'
+import xss from 'xss'
 
 export const leadSockets = async (socket, companyName, companyNamespace) => {
   socket.on('create lead', data => {
     data.id = new ObjectId()
+    data.description = xss(data.description)
     db.companies.updateOne({ company_name: companyName }, {
       $push: {
         leads: data
@@ -90,6 +92,7 @@ export const leadSockets = async (socket, companyName, companyNamespace) => {
 
   socket.on('update lead', async data => {
     data.id = new ObjectId(data.id)
+    data.description = xss(data.description)
 
     const response = await db.companies.updateOne(
       { company_name: companyName },

@@ -28,6 +28,7 @@ export const namespace = (io, companyName) => {
 
   companyNamespace.on('connection', async socket => {
     leadSockets(socket, companyName, companyNamespace)
+
     socket.on('load teampage', async () => {
       const initialLoad = await db.users.find({ company_name: companyName },
         { projection: { password: 0 } }).toArray()
@@ -71,11 +72,10 @@ export const namespace = (io, companyName) => {
           socket.emit('error update user')
         }
 
-        const response = await db.users.replaceOne(
+        await db.users.replaceOne(
           { company_name: companyName, username: data.user.username },
           data.user
         )
-        console.log(response)
       })
     })
   })

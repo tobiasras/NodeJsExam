@@ -46,7 +46,7 @@
     <div class="grid grid-cols-12">
 
     {#await promise}
-        <div class="flex justify-center items-center h-full">
+        <div class="flex justify-center items-center h-full col-span-10">
             <Spinner size="32"/>
         </div>
     {:then socket}

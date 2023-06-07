@@ -12,15 +12,11 @@
     params.subscribe((path) => {
       leadID = path.lead
     })
-
-    let lead
-
-    let isLoaded = false
-
-    let otherFields
-
     socket.emit('load call', leadID)
 
+    let lead
+    let isLoaded = false
+    let otherFields
     socket.on('initial load call', (data) => {
       lead = data
       const { description, name, email, category, phone, id, ...other } = lead
@@ -29,22 +25,22 @@
       isLoaded = true
     })
 
-    onDestroy(() => {
-      socket.off('initial load call')
+    socket.on('lead changes', (data) => {
+      if (data.type === 'update') {
+        lead = Object.values(data.changes)[0]
+      }
     })
-
-    let toggleMdEditor = true
 
     function saveLead () {
       socket.emit('update lead', lead)
       toggleMdEditor = true
     }
 
+    let toggleMdEditor = true
+
     // MODALS
     let modalUpdateLead = false
-
     let submitUpdateLead
-
     let updatedLead
 
     function modalShowUpdateLead () {
@@ -58,10 +54,13 @@
         socket.emit('load call', leadID)
       }
     }
-
     function deleteLead (lead) {
       socket.emit('delete lead', lead)
     }
+
+    onDestroy(() => {
+      socket.off('initial load call')
+    })
 
 </script>
 
