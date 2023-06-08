@@ -40,11 +40,7 @@
         lead.category.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
-    let sortedField = null
-    let sortOrder = true
-
     let leadCache = {}
-
 
     function deleteArchivedLead (lead) {
       socket.emit('delete archived lead', lead)
