@@ -45,20 +45,6 @@
 
     let leadCache = {}
 
-    function sortLeads (field) {
-      if (sortedField === field) {
-        sortOrder = !sortOrder
-      } else {
-        sortedField = field
-        sortOrder = true
-      }
-      archivedLeads.sort((a, b) => {
-        if (a[field] < b[field]) return sortOrder ? -1 : 1
-        if (a[field] > b[field]) return sortOrder ? 1 : -1
-        return 0
-      })
-      archivedLeads = [...archivedLeads]
-    }
 
     function deleteArchivedLead (lead) {
       socket.emit('delete archived lead', lead)
@@ -99,19 +85,19 @@
 
         <TableHead theadClass="dark:bg-gray-900 w-full">
             <TableHeadCell>
-                <button on:click={() => sortLeads('id')} class="hover:bg-gray-300 py-3 px-2">ID</button>
+                <button class="hover:bg-gray-300 py-3 px-2">ID</button>
             </TableHeadCell>
             <TableHeadCell>
-                <button on:click={() => sortLeads('name')} class="hover:bg-gray-300 py-3 px-2">Name</button>
+                <button class="hover:bg-gray-300 py-3 px-2">Name</button>
             </TableHeadCell>
             <TableHeadCell>
-                <button on:click={() => sortLeads('email')} class="hover:bg-gray-300 py-3 px-2">Email</button>
+                <button class="hover:bg-gray-300 py-3 px-2">Email</button>
             </TableHeadCell>
             <TableHeadCell>
-                <button on:click={() => sortLeads('phone')} class="hover:bg-gray-300 py-3 px-2">Phone</button>
+                <button class="hover:bg-gray-300 py-3 px-2">Phone</button>
             </TableHeadCell>
             <TableHeadCell>
-                <button on:click={() => sortLeads('category')} class="hover:bg-gray-300 py-3 px-2">Status</button>
+                <button class="hover:bg-gray-300 py-3 px-2">Status</button>
             </TableHeadCell>
             <TableHeadCell/>
         </TableHead>

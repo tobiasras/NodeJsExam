@@ -1,5 +1,5 @@
 <script>
-    import { Input, Label, Select, Textarea, Button, DropdownItem, Dropdown } from 'flowbite-svelte'
+    import {Input, Label, Select, Textarea, Button, DropdownItem, Dropdown, MenuButton} from 'flowbite-svelte'
 
     let form
     export let socket
@@ -26,7 +26,7 @@
       { value: 'called', name: 'Called' },
       { value: 'ready', name: 'Ready' },
       { value: 'waiting', name: 'Waiting' },
-      { value: 'waiting', name: 'Done' }
+      { value: 'done', name: 'Done' }
     ]
 
     export const submit = (type) => {
@@ -132,11 +132,12 @@
                             <div class="mt-3 flex justify-between w-full items-center">
                                 <Label class="mr-2">
                                     <span>{field.name}</span>
-
                                     <Input bind:value="{lead[field.name]}" type="text" name="name"
                                            required/>
                                 </Label>
                             </div>
+
+                            <MenuButton class="dots-menu dark:text-white" vertical/>
 
                             <Dropdown>
                                 <DropdownItem class="flex justify-between">

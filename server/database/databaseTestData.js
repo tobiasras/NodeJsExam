@@ -16,7 +16,7 @@ db.companies.insertOne(company).then(() => {
     category: 'called',
     Type: 'Called for contract details'
   }
-  lead1.id = new ObjectId()
+  lead1.id = new ObjectId(1)
 
   db.companies.updateOne({ company_name: 'test-company' }, {
     $push: {
@@ -35,7 +35,7 @@ db.companies.insertOne(company).then(() => {
     'Low Price': '2000',
     'High Price': '2500'
   }
-  lead2.id = new ObjectId()
+  lead2.id = new ObjectId(2)
   db.companies.updateOne({ company_name: 'test-company' }, {
     $push: {
       leads: lead2
@@ -49,7 +49,7 @@ db.companies.insertOne(company).then(() => {
     name: 'Julia Smith',
     category: 'waiting'
   }
-  lead3.id = new ObjectId()
+  lead3.id = new ObjectId(3)
   db.companies.updateOne({ company_name: 'test-company' }, {
     $push: {
       leads: lead3
@@ -63,7 +63,7 @@ db.companies.insertOne(company).then(() => {
     name: 'Tom Johnson',
     category: 'called'
   }
-  lead4.id = new ObjectId()
+  lead4.id = new ObjectId(4)
   db.companies.updateOne({ company_name: 'test-company' }, {
     $push: {
       leads: lead4

@@ -16,6 +16,9 @@ router.post('/login', async (req, res) => {
   if (!userFromDb) {
     return res.status(401).send({ message: 'could not authenticate user' })
   }
+
+  console.log(userFromDb)
+
   const result = await bcrypt.compare(password, userFromDb.password)
   if (!result) {
     return res.status(401).send({ message: 'could not authenticate user' })

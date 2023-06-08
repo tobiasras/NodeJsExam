@@ -200,7 +200,7 @@
                                 Edit
                             </DropdownItem>
                             <DropdownItem on:click={() => { deleteLead(lead) }}>
-                                Delete
+                                Archive
                             </DropdownItem>
 
                             <Link to={`/app/call/${lead.id}`}>

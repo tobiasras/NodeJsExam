@@ -33,8 +33,6 @@ app.get('/*', (req, res) => {
 })
 
 const port = process.env.SERVER_PORT || 8080
-console.log(port)
-
 server.listen(port, () => {
   console.log(`Running on ${port}`)
 })
