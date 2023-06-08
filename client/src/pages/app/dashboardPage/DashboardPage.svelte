@@ -92,25 +92,6 @@
         lead.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lead.category.toLowerCase().includes(searchQuery.toLowerCase())
     )
-
-    let sortedField = null
-    let sortOrder = true // true for ascending, false for descending
-
-    function sortLeads (field) {
-      if (sortedField === field) {
-        sortOrder = !sortOrder
-      } else {
-        sortedField = field
-        sortOrder = true
-      }
-      allLeads.sort((a, b) => {
-        if (a[field] < b[field]) return sortOrder ? -1 : 1
-        if (a[field] > b[field]) return sortOrder ? 1 : -1
-        return 0
-      })
-      allLeads = [...allLeads]
-    }
-
 </script>
 
 <div class="col-start-1 col-span-10 px-5 pt-5 h-[calc(100vh-5rem)]">
@@ -173,19 +154,19 @@
 
         <TableHead theadClass="dark:bg-gray-900 w-full">
             <TableHeadCell>
-                <button on:click={() => sortLeads('id')} class="hover:bg-gray-300 py-3 px-2">ID</button>
+                <button class="hover:bg-gray-300 py-3 px-2">ID</button>
             </TableHeadCell>
             <TableHeadCell>
-                <button on:click={() => sortLeads('name')} class="hover:bg-gray-300 py-3 px-2">Name</button>
+                <button class="hover:bg-gray-300 py-3 px-2">Name</button>
             </TableHeadCell>
             <TableHeadCell>
-                <button on:click={() => sortLeads('email')} class="hover:bg-gray-300 py-3 px-2">Email</button>
+                <button class="hover:bg-gray-300 py-3 px-2">Email</button>
             </TableHeadCell>
             <TableHeadCell>
-                <button on:click={() => sortLeads('phone')} class="hover:bg-gray-300 py-3 px-2">Phone</button>
+                <button class="hover:bg-gray-300 py-3 px-2">Phone</button>
             </TableHeadCell>
             <TableHeadCell>
-                <button on:click={() => sortLeads('category')} class="hover:bg-gray-300 py-3 px-2">Status</button>
+                <button class="hover:bg-gray-300 py-3 px-2">Status</button>
             </TableHeadCell>
             <TableHeadCell/>
         </TableHead>
