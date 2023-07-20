@@ -7,7 +7,7 @@ You can generate leads, assigning them custom fields and providing each
 with a descriptive summary that supports markdown format. I've developed a 
 comprehensive company ecosystem where users can register their company and 
 create leads within the scope of their organization. I have also implemented a 
-secure system using tokens and have developed a comprehensive user signup process.
+secure system using jwt tokens and have developed a comprehensive user signup process.
 
 **Tools used for the project**
 * Express js
